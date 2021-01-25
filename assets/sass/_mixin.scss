@@ -1,0 +1,51 @@
+$ease: cubic-bezier(0.4, 0.0, 0.2, 1);
+$easeIn: cubic-bezier(0.6, 0.04, 0.98, 0.335);
+$easeOut: cubic-bezier(0.075, 0.82, 0.165, 1);
+
+$easeInSine: cubic-bezier(0.47, 0, 0.745, 0.715);
+$easeInOutSine: cubic-bezier(0.445, 0.05, 0.55, 0.95);
+$easeOutSine: cubic-bezier(0.39, 0.575, 0.565, 1);
+
+$easeOutBack: cubic-bezier(0.175, 0.885, 0.32, 1.275);
+$easeOutQuint: cubic-bezier(0.23, 1, 0.32, 1);
+
+$easeInQuart: cubic-bezier(0.895, 0.03, 0.685, 0.22);
+$easeOutQuart: cubic-bezier(0.165, 0.84, 0.44, 1);
+
+$easeOutQuad: cubic-bezier(0.5, 1, 0.89, 1);
+
+$easeInCubic: cubic-bezier(0.32, 0, 0.67, 0);
+$easeOutCubic: cubic-bezier(0.33, 1, 0.68, 1);
+
+$easeInOutCirc: cubic-bezier(0.785, 0.135, 0.15, 0.86);
+$easeInCirc: cubic-bezier(0.55, 0, 1, 0.45);
+$easeOutCirc: cubic-bezier(0.075, 0.82, 0.165, 1);
+
+$red: #ff3c3c;
+$blue: #1D3F70;
+$yellow: #fff33d;
+$orange: #ffab64;
+$green: #6ce7a2;
+$cyan: #46c8ff;
+$txtColor: #000;
+$color_blue: #2B24FF;
+$color_yellow: #fffe48;
+
+$SPwidth: 640px;
+
+@mixin hover {
+  transition: opacity 0.4s;
+  &:hover {
+    opacity: 0.5;
+    transition: opacity 0.2s;
+  }
+}
+
+//hiding text
+@mixin txtHide{
+	text-indent: -9999px;
+	white-space: nowrap;
+	overflow: hidden;
+	vertical-align: bottom;
+}
+
