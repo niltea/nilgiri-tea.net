@@ -26,7 +26,7 @@ html {
   -moz-osx-font-smoothing: grayscale;
   -webkit-font-smoothing: antialiased;
   box-sizing: border-box;
-  background: #fefefe;
+  background: #f8f8f8 url("/img/bg.png");
 }
 .wrapper {
   position: relative;
