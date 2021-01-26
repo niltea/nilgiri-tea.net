@@ -34,7 +34,7 @@ p {
   @media (-webkit-min-device-pixel-ratio:2), (min-resolution: 2dppx) {
     h2,
     p {
-      background: url("/img/about-2x.png") 0 0 no-repeat;
+      background-image: url("/img/about-2x.png");
     }
   }
 }

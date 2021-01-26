@@ -35,7 +35,7 @@ section - child top
   }
   @media (-webkit-min-device-pixel-ratio:2), (min-resolution: 2dppx) {
     .logo {
-      background: url("/img/title-2x.png") 0 0 no-repeat;
+      background-image: url("/img/title-2x.png");
     }
   }
 }
