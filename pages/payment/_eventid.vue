@@ -32,10 +32,10 @@
           dl
             dt: input#pass-0(type="radio" name="pass", value="0", v-model="passCount")
             dd: label(for="pass-0") なし
-          dl(v-if="eventOptions.price.pass !== 0")
+          dl(v-if="eventOptions.price_pass !== 0")
             dt: input#pass-1(type="radio" name="pass", value="1", v-model="passCount")
             dd: label(for="pass-1") 1枚
-          dl(v-if="eventOptions.price.pass !== 0")
+          dl(v-if="eventOptions.price_pass !== 0")
             dt: input#pass-2(type="radio" name="pass", value="2", v-model="passCount")
             dd: label(for="pass-2") 2枚
 
@@ -44,10 +44,10 @@
           dl
             dt: input#chair-0(type="radio" name="chair", value="0", v-model="chairCount")
             dd: label(for="chair-0") なし
-          dl(v-if="eventOptions.price.chair !== 0")
+          dl(v-if="eventOptions.price_chair !== 0")
             dt: input#chair-1(type="radio" name="chair", value="1", v-model="chairCount")
             dd: label(for="chair-1") 1脚
-          dl(v-if="eventOptions.price.chair !== 0")
+          dl(v-if="eventOptions.price_chair !== 0")
             dt: input#chair-2(type="radio" name="chair", value="2", v-model="chairCount")
             dd: label(for="chair-2") 2脚
         button.button(@click="confirmPayment") 内容の確認へ
@@ -58,7 +58,7 @@
           |合計金額は{{ fee.total }}円です。
         .buttonWrapper
           button.button(@click="cancelPayment") 内容を修正する
-          button.button(@click="chooseEvent") 支払いを行う
+          button.button(@click="checkout") 支払いを行う
         p
           |お支払い金額内訳
           br
@@ -73,6 +73,24 @@
 </template>
 
 <script>
+import { loadStripe } from '@stripe/stripe-js';
+const stripePromise = loadStripe(process.env.STRIPE_KEY);
+
+class Item {
+  constructor (options) {
+    return {
+      price_data: {
+        currency    : 'jpy',
+        product_data: {
+          name  : options.name,
+          images: [options.image],
+        },
+        unit_amount: options.price,
+      },
+      quantity: options.quantity,
+    };
+  }
+}
 export default {
   data () {
     return {
@@ -84,24 +102,22 @@ export default {
       confirmed  : false,
       events     : {
         'holokle-2nd': {
-          name : 'ホロクル 2nd',
-          url  : 'https://holokle.info/',
-          price: {
-            space: [5000, 10000],
-            pass : 500,
-            chair: 0,
-          },
-          paymentKey: '',
+          name           : 'ホロクル 2nd',
+          url            : 'https://holokle.info/',
+          price_space_1sp: 5000,
+          price_space_2sp: 10000,
+          price_pass     : 500,
+          price_chair    : 0,
+          image          : 'https://i.imgur.com/EHyR2nP.png',
         },
         'vggc-1st': {
-          name : 'VGGC',
-          url  : 'https://vggc.info/',
-          price: {
-            space: [4000, 8000],
-            pass : 500,
-            chair: 0,
-          },
-          paymentKey: '',
+          name           : 'VGGC',
+          url            : 'https://vggc.info/',
+          price_space_1sp: 4000,
+          price_space_2sp: 8000,
+          price_pass     : 500,
+          price_chair    : 0,
+          image          : 'https://i.imgur.com/EHyR2nP.png',
         },
       },
     };
@@ -117,9 +133,9 @@ export default {
       return this.events[this.eventID];
     },
     fee () {
-      const space = this.eventOptions.price.space[this.spaceCount - 1];
-      const pass = this.eventOptions.price.pass * this.passCount;
-      const chair = this.eventOptions.price.chair * this.chairCount;
+      const space = this.eventOptions[`price_space_${this.spaceCount - 1}sp`];
+      const pass = this.eventOptions.price_pass * this.passCount;
+      const chair = this.eventOptions.price_chair * this.chairCount;
       return {
         total: space + pass + chair,
         space,
@@ -139,6 +155,53 @@ export default {
     },
     cancelPayment () {
       this.confirmed = false;
+    },
+    async checkout () {
+      const items = [];
+      // item追加
+      items.push(new Item({
+        name    : `サークル参加費(${this.spaceCount}SP)`,
+        image   : this.eventOptions.image,
+        price   : this.fee.space,
+        quantity: 1,
+      }));
+      // 通行証
+      if (this.passCount !== '0') {
+        // item追加
+        items.push(new Item({
+          name    : '追加通行証',
+          image   : 'https://nilgiri-tea.net/img/pass.png',
+          price   : this.eventOptions.price_pass,
+          quantity: this.passCount,
+        }));
+      }
+      // 追加椅子
+      if (this.chairCount !== '0') {
+        // item追加
+        items.push(new Item({
+          name    : '追加通行証',
+          image   : 'https://nilgiri-tea.net/img/chair.png',
+          price   : this.eventOptions.price_chair,
+          quantity: this.chairCount,
+        }));
+      }
+
+      const stripe = await stripePromise;
+      const response = await this.$axios.post(
+        '/api/checkout',
+        { items: JSON.stringify(items) })
+        .catch((err) => {
+          throw new Error(err);
+        });
+      const session = await response.data;
+      const result = await stripe.redirectToCheckout({
+        sessionId: session.id,
+      });
+      if (result.error) {
+      // If `redirectToCheckout` fails due to a browser or network
+      // error, display the localized error message to your customer
+      // using `result.error.message`.
+      }
     },
   },
 };

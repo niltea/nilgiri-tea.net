@@ -51,6 +51,7 @@ export default {
     '@nuxtjs/axios',
     // https://go.nuxtjs.dev/content
     '@nuxt/content',
+    '@nuxtjs/dotenv',
     '@nuxtjs/google-gtag',
   ],
   'google-gtag': {
@@ -62,6 +63,11 @@ export default {
 
   // Content module configuration: https://go.nuxtjs.dev/config-content
   content: {},
+
+  // Server Middleware
+  serverMiddleware: {
+    '/api': '~/api',
+  },
 
   // Build Configuration: https://go.nuxtjs.dev/config-build
   build: {
