@@ -150,10 +150,10 @@ export default {
   mounted () {
     const query = this.$route.query;
     if (query.space && query.space > '0' && query.space < '3') { this.spaceCount = query.space; }
-    if (this.eventOptions.price_pass !== '0' && query.pass && query.pass > '0' && query.pass < '3') {
+    if (query.pass && this.eventOptions.price_pass !== '0' && query.pass > '0' && query.pass < '3') {
       this.passCount = parseInt(query.pass, 10);
     }
-    if (this.eventOptions.price_chair !== '0' && query.chair && query.chair > '0' && query.chair < '3') {
+    if (query.chair && this.eventOptions.price_chair !== '0' && query.chair > '0' && query.chair < '3') {
       this.chairCount = parseInt(query.chair, 10);
     }
     if (query.confirmed === 'true') { this.confirmed = true; }
