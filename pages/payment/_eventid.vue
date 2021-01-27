@@ -1,74 +1,85 @@
 <template lang="pug">
   .page-wrapper
-    PageHeader
     .payment
-      h2 Nilgiri Tea 主催各イベント参加費のお支払い
 
-      .selectEvent(v-if="!eventID")
-        .lead お支払いを行うイベントを選択してください。
-        select(v-model="selectEvent")
-          option(disabled, value="") こちらより選択
-          option(v-for="event in events", :value="event.event_id") {{ event.name }}
-        button.button(@click="chooseEvent", v-if="selectEvent") このイベントの支払いへ進む
+      .form.selectEvent(v-if="!eventID")
+        h3 サークル参加費決済手続き
+        .form-group
+          p.lead 決済を行うイベントを選択してください
+          .radio-group.form-item
+            template(v-for="event in events")
+              input(:id="`event-${event.event_id}`", type="radio", name="event", :value="event.event_id", v-model="selectEvent")
+              label(:for="`event-${event.event_id}`") {{event.name}}
 
-      .procedure(v-else-if="!confirmed")
-        //- img(:src="eventOptions.image.url", alt="eventOptions.name")
-        p {{eventOptions.name}}の参加費お支払いを行います
-        .formWrapper.spaceCount
-          .lead 申込時のサークル名を入力してください
-          input(name="circleName", value="", v-model="circleName")
+        .form-group
+          button.button(@click="chooseEvent", v-if="selectEvent") このイベントの決済へ進む
 
-        .formWrapper.spaceCount
-          .lead スペース数を選択してください
-          dl
-            dt: input#space-1(type="radio" name="space", value="1", v-model="spaceCount")
-            dd: label(for="space-1") 1スペース
-          dl
-            dt: input#space-2(type="radio" name="space", value="2", v-model="spaceCount")
-            dd: label(for="space-2") 2スペース
-
-        .formWrapper.passCount
-          .lead 追加する通行証はありますか？
-          dl
-            dt: input#pass-0(type="radio" name="pass", value="0", v-model="passCount")
-            dd: label(for="pass-0") なし
-          dl(v-if="eventOptions.price_pass !== '0'")
-            dt: input#pass-1(type="radio" name="pass", value="1", v-model="passCount")
-            dd: label(for="pass-1") 1枚
-          dl(v-if="eventOptions.price_pass !== '0'")
-            dt: input#pass-2(type="radio" name="pass", value="2", v-model="passCount")
-            dd: label(for="pass-2") 2枚
-
-        .formWrapper.chairCount
-          .lead 追加する椅子はありますか？
-          dl
-            dt: input#chair-0(type="radio" name="chair", value="0", v-model="chairCount")
-            dd: label(for="chair-0") なし
-          dl(v-if="eventOptions.price_chair !== '0'")
-            dt: input#chair-1(type="radio" name="chair", value="1", v-model="chairCount")
-            dd: label(for="chair-1") 1脚
-          dl(v-if="eventOptions.price_chair !== '0'")
-            dt: input#chair-2(type="radio" name="chair", value="2", v-model="chairCount")
-            dd: label(for="chair-2") 2脚
-        button.button(@click="confirmPayment") 内容の確認へ
-      .price(v-else)
-        p
-          |サークル名は{{ circleName }}
+      .form.procedure(v-else-if="!confirmed")
+        h3 {{eventOptions.name}} サークル参加費決済手続き
+        p.headLead お申込み時の内容を入力してください
           br
-          |合計金額は{{ fee.total }}円です。
-        .buttonWrapper
-          button.button(@click="cancelPayment") 内容を修正する
-          button.button(@click="checkout") 支払いを行う
-        p
-          |お支払い金額内訳
+          |こちらの画面では申込内容の修正はできません。
           br
-          |参加費 {{ spaceCount }}SP: {{ fee.space }}円
-          span(v-if="passCount !== '0'")
+          |準備会までお問い合わせください。
+        .procedure-content
+          .form-visual
+            img(:src="eventOptions.image.url", alt="eventOptions.name")
+          .form-content
+            .errorMessage(v-if="errorMessage") {{ errorMessage }}
+            .form-group.spaceCount
+              p.lead 申込時のサークル名を入力してください
+              input.form-item(name="circleName", value="", v-model="circleName")
+
+            .form-group.spaceCount
+              p.lead スペース数を選択してください
+              .radio-group.form-item
+                input#space-1(type="radio" name="space", value="1", v-model="spaceCount")
+                label(for="space-1") 1スペース
+                input#space-2(type="radio" name="space", value="2", v-model="spaceCount")
+                label(for="space-2") 2スペース
+
+            .form-group.passCount
+              p.lead 通行証の追加数を選択してください
+              .radio-group.form-item
+                input#pass-0(type="radio" name="pass", value="0", v-model="passCount")
+                label(for="pass-0") なし
+                input#pass-1(type="radio" name="pass", value="1", v-model="passCount")
+                label(for="pass-1", v-if="eventOptions.price_pass !== '0'") 1枚
+                input#pass-2(type="radio" name="pass", value="2", v-model="passCount")
+                label(for="pass-2", v-if="eventOptions.price_pass !== '0'") 2枚
+
+            .form-group.chairCount
+              p.lead 追加椅子の数を選択してください
+              .radio-group.form-item
+                input#chair-0(type="radio" name="chair", value="0", v-model="chairCount")
+                label(for="chair-0") なし
+                input#chair-1(type="radio" name="chair", value="1", v-model="chairCount")
+                label(for="chair-1", v-if="eventOptions.price_chair !== '0'") 1脚
+                input#chair-2(type="radio" name="chair", value="2", v-model="chairCount")
+                label(for="chair-2", v-if="eventOptions.price_chair !== '0'") 2脚
+            .form-group.next
+              button.button.next(@click="confirmPayment") 内容の確認へ
+      .form.price(v-else)
+        h3 決済内容の確認
+        .form-text
+          p 以下の内容で正しいですか？
             br
-            |追加サークル通行証 {{ passCount }}枚: {{ fee.pass }}円
-          span(v-if="chairCount !== '0'")
+            |サークル名： {{ circleName }}
             br
-            |追加椅子 {{ chairCount }}脚: {{ fee.chair }}円
+            |合計金額： {{ fee.total }}円
+        .form-text
+          p.lead 決済金額内訳
+          p
+            |参加費 {{ spaceCount }}スペース: {{ fee.space }}円
+            span(v-if="passCount !== '0'")
+              br
+              |追加サークル通行証 {{ passCount }}枚: {{ fee.pass }}円
+            span(v-if="chairCount !== '0'")
+              br
+              |追加椅子 {{ chairCount }}脚: {{ fee.chair }}円
+        .form-group
+          button.button.prev(@click="cancelPayment") 内容を修正する
+          button.button.next(@click="checkout") 決済を行う
 
 </template>
 
@@ -165,7 +176,12 @@ export default {
       });
     },
     confirmPayment () {
-      this.confirmed = true;
+      if (!this.circleName) {
+        this.errorMessage = 'サークル名が入力されていません';
+      } else {
+        this.errorMessage = '';
+        this.confirmed = true;
+      }
     },
     cancelPayment () {
       this.confirmed = false;
@@ -220,8 +236,187 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.form {
+  position: relative;
+  //width: $max-width;
+  border-radius: 15px;
+  box-shadow: 0 0 20px rgba(#000, .2);
+  box-sizing: border-box;
+  margin: 100px auto 10px;
+  padding: 40px;
+  overflow: hidden;
+  &.procedure {
+    .form-visual {
+      img {
+        height: auto;
+      }
+    }
+  }
+  @media screen and (min-width: 851px) {
+    &.procedure {
+      .procedure-content {
+        display: flex;
+        margin-top: 30px;
+      }
+      .form-visual {
+        width: 40%;
+        padding-top: 10px;
+        img {
+          width: 100%;
+        }
+      }
+      .form-content {
+        margin-left: 20px;
+      }
+    }
+  }
+  @media screen and (max-width: 850px) {
+    &.procedure {
+      .form-visual {
+        margin-top: 30px;
+        text-align: center;
+        h3 {
+          margin-bottom: 40px;
+        }
+        img {
+          width: 80%;
+        }
+      }
+      .form-content {
+        margin-top: 40px;
+      }
+    }
+  }
+}
+h3 {
+  font-size: 28px;
+  text-align: center;
+}
+.headLead {
+  font-size: 16px;
+  text-align: center;
+}
+.errorMessage {
+  margin-top: 30px;
+  text-align: center;
+  font-size: 24px;
+  color: $red;
+}
+.payment {
+  margin: 90px auto 0;
+  max-width: 900px;
+}
+.lead {
+  font-size: 18px;
+  color: $blue;
+  +.form-item {
+    margin-top: 10px;
+  }
+}
+select {}
+.form-text {
+  margin: 30px 0 0;
+  text-align: center;
+  p {
+    font-size: 20px;
+  }
+}
+.form-group {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  margin: 30px 0 0;
+  &:first-child {
+    margin-top: 0;
+  }
+  &.next {
+    margin-top: 50px;
+  }
+
+  label {
+    display: block;
+    margin: 0 0 10px;
+    color: $gray;
+    height: 60px;
+    line-height: 60px;
+    font-size: 28px;
+  }
+
+  input {
+    outline: none;
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
+    color: $dark-gray;
+    background-color: rgba($dark-gray, 0.1);
+    transition: 0.1s ease;
+    border: 1px solid $black;
+    border-radius: 4px;
+    line-height: 60px;
+    font-size: 28px;
+    padding: 0 15px;
+    &:focus {
+      color: $black;
+      background: $white;
+    }
+  }
+}
+
+button {
+  outline: none;
+  background: $blue;
+  border: 0;
+  box-sizing: border-box;
+  border-radius: 4px;
+  color: $white;
+  font-family: inherit;
+  font-size: 28px;
+  line-height: 60px;
+  cursor: pointer;
+  margin: 2px;
+  flex: 1;
+  &.prev {
+    background: $light-gray;
+    border: 1px solid $black;
+    color: $black;
+  }
+  &.next {
+    background: $black;
+  }
+}
+.radio-group {
+  background: #fff;
+  display: flex;
+  width: 100%;
+  border: 1px solid $light-gray;
+  border-radius: 4px;
+  font-size: 28px;
+  padding: 2px;
+  line-height: 60px;
+  label {
+    flex: 1;
+    background: transparent;
+    border: 1px solid transparent;
+    border-radius: 2px;
+    display: block;
+    margin: 2px;
+    padding: 0 15px;
+    text-align: center;
+    transition: .2s all ease-in-out;
+    border: 1px solid $dark-gray;
+  }
+  input[type="radio"] {
+    display: none;
+    &:checked + label {
+      background: $blue;
+      color: $white;
+      border: 1px solid $blue;
+    }
+  }
+}
 @media screen and (min-width: 751px) {
-  .section.section-link {
+  .payment {
+    margin-top: 90px;
     ul.links {
       margin-top: 10px;
       li {
