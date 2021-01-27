@@ -59,7 +59,9 @@ export default {
   },
 
   // Axios module configuration: https://go.nuxtjs.dev/config-axios
-  axios: {},
+  axios: {
+    responseType: 'json',
+  },
 
   // Content module configuration: https://go.nuxtjs.dev/config-content
   content: {},
