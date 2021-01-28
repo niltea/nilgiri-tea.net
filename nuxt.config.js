@@ -78,4 +78,12 @@ export default {
       chunk: ({ isDev }) => isDev ? '[name].[hash].js' : '[chunkhash].js',
     },
   },
+  env: {
+    COSMIC_READ_KEY  : process.env.COSMIC_READ_KEY,
+    COSMIC_BUCKET    : process.env.COSMIC_BUCKET,
+    COSMIC_ID_PAYMENT: process.env.COSMIC_ID_PAYMENT,
+    // stripe
+    STRIPE_SECRET    : process.env.STRIPE_SECRET,
+    STRIPE_KEY       : process.env.STRIPE_KEY,
+  },
 };
