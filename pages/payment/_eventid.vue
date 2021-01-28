@@ -242,7 +242,7 @@ export default {
 
       const stripe = await stripePromise;
       const response = await this.$axios.post(
-        '/api/checkout',
+        `${window.location.origin}/api/checkout`,
         { items: JSON.stringify(items), metadata: JSON.stringify(metadata) })
         .catch((err) => {
           throw new Error(err);
