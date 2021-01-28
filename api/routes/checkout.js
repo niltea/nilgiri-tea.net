@@ -13,11 +13,13 @@ router.post('/checkout', async (req, res) => {
     payment_intent_data : {
       metadata,
     },
-    customer_email: metadata.email,
-    mode          : 'payment',
-    success_url   : 'https://nilgiri-tea.net/payment/success',
-    cancel_url    : 'https://nilgiri-tea.net/payment',
+    mode       : 'payment',
+    success_url: 'https://nilgiri-tea.net/payment/success',
+    cancel_url : 'https://nilgiri-tea.net/payment',
   };
+  if (metadata.email) {
+    sessionParams.customer_email = metadata.email;
+  }
   const session = await stripe.checkout.sessions.create(sessionParams);
   res.json({ id: session.id });
 });
