@@ -5,8 +5,12 @@
 
       .form.selectEvent(v-if="!eventID")
         h3 サークル参加費決済手続き
+        p.headLead 決済を行うイベントを選択してください
+          br
+          |こちらはクレジット決済専用です。
+          br
+          |銀行振込の場合は、メールに記載の口座へにご送金ください。
         .form-group
-          p.lead 決済を行うイベントを選択してください
           .radio-group.form-item
             template(v-for="event in events")
               input(:id="`event-${event.event_id}`", type="radio", name="event", :value="event.event_id", v-model="selectEvent")
@@ -22,6 +26,10 @@
           |こちらの画面では申込内容の修正はできません。
           br
           |修正が必要な場合、準備会までお問い合わせください。
+        p.headLead
+          |こちらはクレジット決済専用です。
+          br
+          |銀行振込の場合は、メールに記載の口座へにご送金ください。
         .procedure-content
           .form-visual
             img(:src="eventOptions.image.url", alt="eventOptions.name")
@@ -311,6 +319,7 @@ h3 {
 .headLead {
   font-size: 16px;
   text-align: center;
+  margin-top: 1em;
 }
 .errorMessage {
   margin-top: 30px;
