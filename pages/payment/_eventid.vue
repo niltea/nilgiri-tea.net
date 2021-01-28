@@ -92,7 +92,9 @@
           button.button.prev(@click="cancelPayment") 内容を修正する
           button.button.next(@click="checkout") 決済を行う
       .sctl
-        a(:href="`${eventOptions.url}sctl`", target="_blank") 特定商取引法に基づく表示({{eventOptions.name}})
+        a(v-if="eventID",
+          :href="`${eventOptions.url}sctl`",
+          target="_blank") 特定商取引法に基づく表示({{eventOptions.name}})
 </template>
 
 <script>
