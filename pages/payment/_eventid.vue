@@ -100,17 +100,22 @@ const stripePromise = loadStripe(process.env.STRIPE_KEY);
 
 class Item {
   constructor (options) {
-    return {
-      price_data: {
+    const itemData = {
+      quantity: options.quantity,
+    };
+    if (options.price) {
+      itemData.price = options.price;
+    } else {
+      itemData.price_data = {
         currency    : 'jpy',
         product_data: {
           name  : options.name,
           images: [options.image],
         },
-        unit_amount: options.price,
-      },
-      quantity: options.quantity,
-    };
+        unit_amount: options.amount,
+      };
+    }
+    return itemData;
   }
 }
 export default {
@@ -160,7 +165,7 @@ export default {
       return this.events[this.eventID];
     },
     fee () {
-      const space = parseInt(this.eventOptions[`price_space_${this.spaceCount}sp`], 10);
+      const space = parseInt(this.eventOptions.price_space, 10) * this.spaceCount;
       const pass = parseInt(this.eventOptions.price_pass, 10) * this.passCount;
       const chair = parseInt(this.eventOptions.price_chair, 10) * this.chairCount;
       return {
@@ -206,19 +211,15 @@ export default {
       // 参加費データをitemにいれる
       const items = [
         new Item({
-          name    : `サークル参加費(${this.spaceCount}SP)`,
-          image   : this.eventOptions.image.url,
-          price   : this.fee.space,
-          quantity: 1,
+          price   : this.eventOptions.price_id_space,
+          quantity: this.spaceCount,
         }),
       ];
       // 通行証
       if (this.passCount !== '0') {
         // item追加
         items.push(new Item({
-          name    : '追加通行証',
-          image   : 'https://nilgiri-tea.net/img/pass.png',
-          price   : this.eventOptions.price_pass,
+          price   : this.eventOptions.price_id_pass,
           quantity: this.passCount,
         }));
       }
@@ -226,9 +227,7 @@ export default {
       if (this.chairCount !== '0') {
         // item追加
         items.push(new Item({
-          name    : '追加椅子',
-          image   : 'https://nilgiri-tea.net/img/chair.png',
-          price   : this.eventOptions.price_chair,
+          price   : this.eventOptions.price_id_chair,
           quantity: this.chairCount,
         }));
       }
