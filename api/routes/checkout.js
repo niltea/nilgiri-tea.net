@@ -5,14 +5,20 @@ const router = Router();
 
 // Test route
 router.post('/checkout', async (req, res) => {
-  const session = await stripe.checkout.sessions.create({
+  const lineItems = JSON.parse(req.body.items);
+  const metadata = JSON.parse(req.body.metadata);
+  const sessionParams = {
     payment_method_types: ['card'],
-    line_items          : JSON.parse(req.body.items),
-    mode                : 'payment',
-    success_url         : 'https://nilgiri-tea.net/payment/success',
-    cancel_url          : 'https://nilgiri-tea.net/payment',
-  });
-
+    line_items          : lineItems,
+    payment_intent_data : {
+      metadata,
+    },
+    customer_email: metadata.email,
+    mode          : 'payment',
+    success_url   : 'https://nilgiri-tea.net/payment/success',
+    cancel_url    : 'https://nilgiri-tea.net/payment',
+  };
+  const session = await stripe.checkout.sessions.create(sessionParams);
   res.json({ id: session.id });
 });
 // get

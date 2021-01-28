@@ -30,6 +30,8 @@
             .form-group.spaceCount
               p.lead 申込時のサークル名を入力してください
               input.form-item(name="circleName", value="", v-model="circleName")
+              input.form-item(name="circleID", value="", v-model="circleID", type="hidden")
+              input.form-item(name="email", value="", v-model="email", type="hidden")
 
             .form-group.spaceCount
               p.lead スペース数を選択してください
@@ -63,7 +65,7 @@
       .form.price(v-else)
         h3 決済内容の確認
         .form-text
-          p 以下の内容で正しいですか？
+          p 以下の内容が正しい事をご確認ください
             br
             |サークル名： {{ circleName }}
             br
@@ -131,6 +133,8 @@ export default {
       errorMessage: '',
       selectEvent : '',
       circleName  : '',
+      circleID    : '',
+      email       : '',
       spaceCount  : '1',
       passCount   : '0',
       chairCount  : '0',
@@ -168,6 +172,9 @@ export default {
     if (query.chair && this.eventOptions.price_chair !== '0' && query.chair > '0' && query.chair < '3') {
       this.chairCount = parseInt(query.chair, 10);
     }
+    if (query.name) { this.circleName = decodeURI(query.name); }
+    if (query.id) { this.circleID = query.id; }
+    if (query.email) { this.email = query.email; }
     if (query.confirmed === 'true') { this.confirmed = true; }
   },
   methods: {
@@ -188,14 +195,15 @@ export default {
       this.confirmed = false;
     },
     async checkout () {
-      const items = [];
-      // item追加
-      items.push(new Item({
-        name    : `サークル参加費(${this.spaceCount}SP)`,
-        image   : this.eventOptions.image.url,
-        price   : this.fee.space,
-        quantity: 1,
-      }));
+      // 参加費データをitemにいれる
+      const items = [
+        new Item({
+          name    : `サークル参加費(${this.spaceCount}SP)`,
+          image   : this.eventOptions.image.url,
+          price   : this.fee.space,
+          quantity: 1,
+        }),
+      ];
       // 通行証
       if (this.passCount !== '0') {
         // item追加
@@ -210,17 +218,25 @@ export default {
       if (this.chairCount !== '0') {
         // item追加
         items.push(new Item({
-          name    : '追加通行証',
+          name    : '追加椅子',
           image   : 'https://nilgiri-tea.net/img/chair.png',
           price   : this.eventOptions.price_chair,
           quantity: this.chairCount,
         }));
       }
 
+      const metadata = {
+        evID      : this.eventOptions.eventID,
+        event     : this.eventOptions.name,
+        circleName: this.circleName,
+        circleID  : this.circleID,
+        email     : this.email,
+      };
+
       const stripe = await stripePromise;
       const response = await this.$axios.post(
         '/api/checkout',
-        { items: JSON.stringify(items) })
+        { items: JSON.stringify(items), metadata: JSON.stringify(metadata) })
         .catch((err) => {
           throw new Error(err);
         });
@@ -239,7 +255,6 @@ export default {
 <style lang="scss" scoped>
 .form {
   position: relative;
-  //width: $max-width;
   border-radius: 15px;
   box-shadow: 0 0 20px rgba(#000, .2);
   box-sizing: border-box;
