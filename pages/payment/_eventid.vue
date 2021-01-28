@@ -1,5 +1,6 @@
 <template lang="pug">
   .page-wrapper
+    PageHeader
     .payment
 
       .form.selectEvent(v-if="!eventID")
@@ -20,7 +21,7 @@
           br
           |こちらの画面では申込内容の修正はできません。
           br
-          |準備会までお問い合わせください。
+          |修正が必要な場合、準備会までお問い合わせください。
         .procedure-content
           .form-visual
             img(:src="eventOptions.image.url", alt="eventOptions.name")
