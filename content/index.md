@@ -20,10 +20,10 @@ Web・デザイン等の受注・制作を行っています。
 - [![＃にじそうさく](https://familiar-life.info/images/nijis-logo.png)](https://nijisanji.familiar-life.info/)  
   ＃にじそうさく (FL準備会 主催)  
   バーチャルライバーグループ にじさんじ オンリー同人誌即売会
-- [![アクアマリンドリーム](https://aquamarine-dream.info/static/images/common/aqmd_banner.jpg)](http://aquamarine-dream.info/)  
+- [![アクアマリンドリーム](https://aquamarine-dream.info/images/common/aqmd_banner.jpg)](http://aquamarine-dream.info/)  
   アクアマリンドリーム (アクアマリンドリーム準備会 主催)  
   ラブライブ！サンシャイン!!オンリー同人誌即売会
-- [![777 FESTIVAL](https://7fes.com/static/images/common/banner.png)](https://7fes.com/)  
+- [![777 FESTIVAL](https://7fes.com/images/common/banner.png)](https://7fes.com/)  
   777 FESTIVAL (ナナフェス準備会 主催)  
   Tokyo 7thシスターズ オンリー同人誌即売会
 
@@ -33,4 +33,3 @@ Web・デザイン等の受注・制作を行っています。
 
 - [![palette1202](/img/p1202.png)](https://palette1202.nilgiri-tea.net/)  
   イラストレーター向け片手デバイスpalette1202
-
