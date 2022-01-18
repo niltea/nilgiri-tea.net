@@ -252,9 +252,9 @@ export default {
       // 優待コード
       if (this.isPromoEnabled === true) {
         // item追加
-        discounts.push(new Item({
+        discounts.push({
           coupon: this.eventOptions.price_id_promo,
-        }));
+        });
       }
 
       const metadata = {
