@@ -68,6 +68,10 @@
                 label(for="chair-1", v-if="eventOptions.price_chair !== '0'") 1脚
                 input#chair-2(type="radio" name="chair", value="2", v-model="chairCount")
                 label(for="chair-2", v-if="eventOptions.price_chair !== '0'") 2脚
+
+            .form-group.promoCode
+              p.lead 優待コードがある場合は入力してください
+              input.form-item(name="promoCode", value="", v-model="promoCode")
             .form-group.next
               button.button.next(@click="confirmPayment") 内容の確認へ
       .form.price(v-else)
@@ -88,6 +92,9 @@
             span(v-if="chairCount !== '0'")
               br
               |追加椅子 {{ chairCount }}脚: {{ fee.chair }}円
+            span(v-if="isPromoEnabled === true")
+              br
+              |コード割引 -{{ this.eventOptions.price_promo }}円
         .form-group
           button.button.prev(@click="cancelPayment") 内容を修正する
           button.button.next(@click="checkout") 決済を行う
@@ -154,6 +161,7 @@ export default {
       spaceCount  : '1',
       passCount   : '0',
       chairCount  : '0',
+      promoCode   : '',
       confirmed   : false,
     };
   },
@@ -167,15 +175,20 @@ export default {
     eventOptions () {
       return this.events[this.eventID];
     },
+    isPromoEnabled () {
+      return this.promoCode === this.eventOptions.promo_code;
+    },
     fee () {
       const space = parseInt(this.eventOptions.price_space, 10) * this.spaceCount;
       const pass = parseInt(this.eventOptions.price_pass, 10) * this.passCount;
       const chair = parseInt(this.eventOptions.price_chair, 10) * this.chairCount;
+      const promo = (this.isPromoEnabled === true) ? parseInt(this.eventOptions.price_promo, 10) : 0;
       return {
-        total: space + pass + chair,
+        total: space + pass + chair - promo,
         space,
         pass,
         chair,
+        promo,
       };
     },
   },
@@ -191,6 +204,7 @@ export default {
     if (query.name) { this.circleName = decodeURI(query.name); }
     if (query.id) { this.circleID = query.id; }
     if (query.email) { this.email = query.email; }
+    if (query.code) { this.promoCode = query.code; }
     if (query.confirmed === 'true') { this.confirmed = true; }
   },
   methods: {
@@ -218,6 +232,7 @@ export default {
           quantity: this.spaceCount,
         }),
       ];
+      const discounts = [];
       // 通行証
       if (this.passCount !== '0') {
         // item追加
@@ -234,6 +249,13 @@ export default {
           quantity: this.chairCount,
         }));
       }
+      // 優待コード
+      if (this.isPromoEnabled === true) {
+        // item追加
+        discounts.push(new Item({
+          coupon: this.eventOptions.price_id_promo,
+        }));
+      }
 
       const metadata = {
         evID      : this.eventOptions.eventID,
@@ -246,7 +268,11 @@ export default {
       const stripe = await stripePromise;
       const response = await this.$axios.post(
         `${window.location.origin}/api/checkout`,
-        { items: JSON.stringify(items), metadata: JSON.stringify(metadata) })
+        {
+          items    : JSON.stringify(items),
+          metadata : JSON.stringify(metadata),
+          discounts: JSON.stringify(discounts),
+        })
         .catch((err) => {
           throw new Error(err);
         });
