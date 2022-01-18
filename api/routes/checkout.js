@@ -7,12 +7,14 @@ const router = Router();
 router.post('/checkout', async (req, res) => {
   const lineItems = JSON.parse(req.body.items);
   const metadata = JSON.parse(req.body.metadata);
+  const discounts = JSON.parse(req.body.discounts);
   const sessionParams = {
     payment_method_types: ['card'],
     line_items          : lineItems,
     payment_intent_data : {
       metadata,
     },
+    discounts,
     mode       : 'payment',
     success_url: 'https://nilgiri-tea.net/payment/success',
     cancel_url : 'https://nilgiri-tea.net/payment',
