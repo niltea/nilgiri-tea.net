@@ -39,7 +39,10 @@
               p.lead 申込時のサークル名を入力してください
               input.form-item(name="circleName", value="", v-model="circleName")
               input.form-item(name="circleID", value="", v-model="circleID", type="hidden")
-              input.form-item(name="email", value="", v-model="email", type="hidden")
+
+            .form-group.email
+              p.lead 申込時のメールアドレスを入力してください
+              input.form-item(name="email", value="", v-model="email")
 
             .form-group.spaceCount
               p.lead スペース数を選択してください
@@ -80,6 +83,8 @@
           p 以下の内容が正しい事をご確認ください
             br
             |サークル名： {{ circleName }}
+            br
+            |メールアドレス： {{ email }}
             br
             |合計金額： {{ fee.total }}円
         .form-text
