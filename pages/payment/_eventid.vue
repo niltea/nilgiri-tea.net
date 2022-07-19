@@ -44,7 +44,7 @@
               p.lead 申込時のメールアドレスを入力してください
               input.form-item(name="email", value="", v-model="email")
 
-            .form-group.spaceCount
+            .form-group.spaceCount(v-if="eventOptions.event_id !== 'options'")
               p.lead スペース数を選択してください
               .radio-group.form-item
                 input#space-1(type="radio" name="space", value="1", v-model="spaceCount")
@@ -72,7 +72,7 @@
                 input#chair-2(type="radio" name="chair", value="2", v-model="chairCount")
                 label(for="chair-2", v-if="eventOptions.price_chair !== '0'") 2脚
 
-            .form-group.promoCode
+            .form-group.promoCode(v-if="eventOptions.event_id !== 'options'")
               p.lead 優待コードがある場合は入力してください
               input.form-item(name="promoCode", value="", v-model="promoCode")
             .form-group.next
@@ -90,9 +90,10 @@
         .form-text
           p.lead 決済金額内訳
           p
-            |参加費 {{ spaceCount }}スペース: {{ fee.space }}円
+            span(v-if="eventOptions.event_id !== 'options'")
+              |参加費 {{ spaceCount }}スペース: {{ fee.space }}円
             span(v-if="passCount !== '0'")
-              br
+              br(v-if="eventOptions.event_id !== 'options'")
               |追加サークル通行証 {{ passCount }}枚: {{ fee.pass }}円
             span(v-if="chairCount !== '0'")
               br
@@ -181,6 +182,7 @@ export default {
       return this.events[this.eventID];
     },
     isPromoEnabled () {
+      if (this.eventOptions.promo_code === '') { return false; }
       return this.promoCode === this.eventOptions.promo_code;
     },
     fee () {
