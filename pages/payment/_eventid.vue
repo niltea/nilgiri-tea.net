@@ -233,12 +233,15 @@ export default {
     },
     async checkout () {
       // 参加費データをitemにいれる
-      const items = [
-        new Item({
-          price   : this.eventOptions.price_id_space,
-          quantity: this.spaceCount,
-        }),
-      ];
+      const items = [];
+      if (this.eventOptions.event_id !== 'options') {
+        items.push(
+          new Item({
+            price   : this.eventOptions.price_id_space,
+            quantity: this.spaceCount,
+          }),
+        );
+      }
       const discounts = [];
       // 通行証
       if (this.passCount !== '0') {
