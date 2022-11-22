@@ -32,7 +32,7 @@
           |銀行振込の場合は、メールに記載の口座へにご送金ください。
         .procedure-content
           .form-visual
-            img(:src="eventOptions.image.url", alt="eventOptions.name")
+            img(:src="eventOptions.image.url", :alt="eventOptions.name")
           .form-content
             .errorMessage(v-if="errorMessage") {{ errorMessage }}
             .form-group.spaceCount
