@@ -74,7 +74,7 @@
 
             .form-group.promoCode(v-if="eventOptions.event_id !== 'options'")
               p.lead 優待コードがある場合は入力してください
-              input.form-item(name="promoCode", value="", v-model="promoCode")
+              input.form-item(name="formPromoCode", value="", v-model="formPromoCode")
             .form-group.next
               button.button.next(@click="confirmPayment") 内容の確認へ
       .form.price(v-else)
@@ -159,16 +159,16 @@ export default {
   },
   data () {
     return {
-      errorMessage: '',
-      selectEvent : '',
-      circleName  : '',
-      circleID    : '',
-      email       : '',
-      spaceCount  : '1',
-      passCount   : '0',
-      chairCount  : '0',
-      promoCode   : '',
-      confirmed   : false,
+      errorMessage : '',
+      selectEvent  : '',
+      circleName   : '',
+      circleID     : '',
+      email        : '',
+      spaceCount   : '1',
+      passCount    : '0',
+      chairCount   : '0',
+      formPromoCode: '',
+      confirmed    : false,
     };
   },
   computed: {
@@ -211,7 +211,7 @@ export default {
     if (query.name) { this.circleName = decodeURI(query.name); }
     if (query.id) { this.circleID = query.id; }
     if (query.email) { this.email = query.email; }
-    if (query.code) { this.promoCode = query.code; }
+    if (query.code) { this.formPromoCode = query.code; }
     if (query.confirmed === 'true') { this.confirmed = true; }
   },
   methods: {
