@@ -98,9 +98,9 @@
             span(v-if="chairCount !== '0'")
               br
               |追加椅子 {{ chairCount }}脚: {{ fee.chair }}円
-            span(v-if="isPromoEnabled === true")
+            span(v-if="promoAttached.isValid === true")
               br
-              |コード割引 -{{ this.eventOptions.price_promo }}円
+              |コード割引 -{{ this.promoAttached.price }}円
         .form-group
           button.button.prev(@click="cancelPayment") 内容を修正する
           button.button.next(@click="checkout") 決済を行う
@@ -181,15 +181,44 @@ export default {
     eventOptions () {
       return this.events[this.eventID];
     },
-    isPromoEnabled () {
-      if (this.eventOptions.promo_code === '') { return false; }
-      return this.promoCode === this.eventOptions.promo_code;
+    promoCodes () {
+      if (!this.eventOptions.promo) {
+        return ([]);
+      }
+      const setting = this.eventOptions.promo;
+      return setting.map((promo) => {
+        return {
+          title: promo.title,
+          code : promo.metadata.code,
+          id   : promo.metadata.promotion_id,
+          price: promo.metadata.price,
+        };
+      });
+    },
+    promoAttached () {
+      if (this.formPromoCode === '') {
+        return {
+          isValid: false,
+        };
+      }
+      const foundPromo = this.promoCodes.find(candidate => candidate.code === this.formPromoCode);
+      if (!foundPromo) {
+        return {
+          isValid: false,
+        };
+      }
+      return {
+        title  : foundPromo.title,
+        price  : foundPromo.price,
+        priceID: foundPromo.id,
+        isValid: true,
+      };
     },
     fee () {
       const space = parseInt(this.eventOptions.price_space, 10) * this.spaceCount;
       const pass = parseInt(this.eventOptions.price_pass, 10) * this.passCount;
       const chair = parseInt(this.eventOptions.price_chair, 10) * this.chairCount;
-      const promo = (this.isPromoEnabled === true) ? parseInt(this.eventOptions.price_promo, 10) : 0;
+      const promo = (this.promoAttached.isValid === true) ? parseInt(this.promoAttached.price, 10) : 0;
       return {
         total: space + pass + chair - promo,
         space,
@@ -260,10 +289,10 @@ export default {
         }));
       }
       // 優待コード
-      if (this.isPromoEnabled === true) {
+      if (this.promoAttached.isValid === true) {
         // item追加
         discounts.push({
-          coupon: this.eventOptions.price_id_promo,
+          coupon: this.promoAttached.priceID,
         });
       }
 
