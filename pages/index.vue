@@ -15,8 +15,8 @@
       p
         |ご連絡は下記フォームよりお願いします。
         br
-        |なお、各即売会については、それぞれのWebサイトへ記載のメールアドレスよりご連絡ください。
-      a.contact(href="https://docs.google.com/forms/d/e/1FAIpQLSeFP43yofY-p2GYOdRiv8rNOZIMF2obWYYQ-ZjjbdUVnGPHnA/viewform", target="_blank") contact Form
+        |なお、各即売会については、それぞれのWebサイトへ記載のフォームよりご連絡ください。
+      nuxt-link(to="/inquiry") contact Form
 </template>
 
 <script>

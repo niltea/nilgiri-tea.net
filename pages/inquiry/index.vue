@@ -4,12 +4,11 @@
     .section.section-link
       h2 Contact
       .contactWrapper
-        .form-val {{contactData}}
         form(v-on:submit.prevent="submit")
           .form-section
             .form-group
-              .form-key お問い合わせ先のイベントを選択してください
-              .form-value
+              .form-header お問い合わせ先のイベントを選択してください
+              .form-value.form-radio
                 label(for="event-vggc")
                   input.input-radio#event-vggc(
                     type="radio",
@@ -33,12 +32,12 @@
                     value="nilgiri",
                     v-model="contact.event",
                   )
-                  | イベント共通・主催者についてのお問い合わせ
+                  | イベント共通のお問い合わせ
           // イベントについて
           .form-section(v-if="contact.event === 'vggc' || contact.event === 'holokle'")
             .form-group
-              .form-key サークル参加・一般参加のいずれかを選択してください。
-              .form-value
+              .form-header サークル参加・一般参加のいずれかを選択してください。
+              .form-value.form-radio
                 label(for="isCircle-true")
                   input.input-radio#isCircle-true(
                     type="radio",
@@ -60,20 +59,20 @@
             .form-section(v-if="contact.isCircle === true")
               h2 サークル参加者の問い合わせ
               .form-group
-                .form-group__key ご連絡先のメールアドレス
-                .form-group__val
+                .form-group__val.form-input
+                  label ご連絡先のメールアドレス
                   input.input-text(type="email" name="mail" v-model="contact.mail")
               .form-group
-                .form-group__key サークル名
-                .form-group__val
+                .form-group__val.form-input
+                  label サークル名
                   input.input-text(type="text" name="circleName" class="c-input-text" v-model="contact.circleName")
               .form-group
-                .form-group__key ペンネーム
-                .form-group__val
+                .form-group__val.form-input
+                  label ペンネーム
                   input.input-text(type="text" name="name" class="c-input-text" v-model="contact.name")
               .form-group
-                .form-key お問い合わせ種別を選択してください。
-                .form-value
+                .form-header お問い合わせ種別を選択してください。
+                .form-value.form-radio
                   label
                     input(value="correction", type="radio", name="type", v-model="contact.inquiryCategory")
                     | サークル参加申込内容の修正・変更（オプション追加以外）
@@ -87,102 +86,105 @@
                     input(value="others", type="radio", name="type", v-model="contact.inquiryCategory")
                     | その他のご連絡・お問い合わせ
 
-              // サークル参加者の問い合わせ
-              .form-section(v-if="contact.inquiryCategory === 'correction'")
-                .form-group
-                  .form-key
-                    |変更後の参加情報をお知らせください。
-                    br
-                    |どの項目を変更するか、お申込み確認メールを参照し明記してください。
-                    br
-                    |変更内容だけの記載しかない場合、ご対応できない場合があります。
-                  .form-value
-                    textarea.input-textarea(name="body" v-model="contact.body")
-                button.button(type="submit") 確認
+              // サークル参加申込内容の修正・変更（オプション追加以外）
+              .form-group(v-if="contact.inquiryCategory === 'correction'")
+                .form-header 変更後の参加情報
+                p.form-note
+                  |変更後の参加情報をお知らせください。
+                  br
+                  |どの項目を変更するか、お申込み確認メールを参照し明記してください。
+                  br
+                  |変更内容だけの記載しかない場合、ご対応できない場合があります。
+                .form-value.form-textarea
+                  textarea.input-textarea(name="body" v-model="contact.body")
 
               // サークル通行証または椅子の追加
               .form-section(v-if="contact.inquiryCategory === 'addOptions'")
-                p
+                .form-header 追加数量の選択
+                p.form-note
                   | 通行証は標準で2名分（2スペース参加の場合は4名分）が参加費に含まれています。
                   br
                   | 頒布上必要な場合に限り、1スペースあたり1名分追加できます。
-                p
+                p.form-note
                   | 椅子は標準で1脚（2スペース参加の場合は2脚）が参加費に含まれています。
                   br
                   | 1スペースあたり1脚追加できます。
 
-                p
+                p.form-note
                   | やむを得ない理由がある場合、上記の制限を超えて追加が可能です。
                   br
                   |「ご連絡事項」へ詳細・追加する数量・追加理由をご記入ください。
 
                 .form-group
-                  .form-key
+                  .form-header
                     | 通行証の追加数
-                  .form-value
-                    select.select(name="ticketCount", v-model="contact.ticketCount")
-                      option(value="0") 0
-                      option(value="1") 1
-                      option(value="2") 2
+                  .form-value.input-select
+                    label
+                      select.select(name="ticketCount", v-model="contact.ticketCount")
+                        option(value="0") 0
+                        option(value="1") 1
+                        option(value="2") 2
                 .form-group
-                  .form-key
+                  .form-header
                     | 椅子の追加数
-                  .form-value
-                    select.select(name="chairCount", v-model="contact.chairCount")
-                      option(value="0", selected="selected") 0
-                      option(value="1") 1
-                      option(value="2") 2
+                  .form-value.input-select
+                    label
+                      select.select(name="chairCount", v-model="contact.chairCount")
+                        option(value="0", selected="selected") 0
+                        option(value="1") 1
+                        option(value="2") 2
                 .form-group
                   .form-group__key ご連絡事項
                   .form-group__val
                     textarea.input-textarea(name="body" v-model="contact.body")
-                button.button(type="submit") 確認
 
               // 参加費ご入金連絡（銀行振込）
               .form-section(v-if="contact.inquiryCategory === 'reportPayment'")
-                p
-                  | スムーズにお支払いを確認するため、補足情報をご記載ください。
+                .form-header お支払い情報
+                p.form-note
+                  | スムーズにお支払いを確認するため、お支払い情報をご記載ください。
                   br
                   | 既に準備会より入金確認のご連絡を行っている場合、本フォームでの報告は不要です。
                   br
                   | クレジットカード決済の場合も自動で必要事項を取得していますのでご連絡不要です。
                 .form-group
-                  .form-group__key お支払い日
-                  .form-group__val
+                  .form-group__val.form-input
+                    label お支払い日
                     input.input-text(type="date" name="paidDate" v-model="contact.paidDate")
                 .form-group
-                  .form-group__key お支払い金額
-                  .form-group__val
+                  .form-group__val.form-input
+                    label お支払い金額
                     input.input-text(type="number" name="paidPrice" v-model="contact.paidPrice")
-                    | 円
                 .form-group
-                  .form-group__key お支払い名義（カタカナで入力）<br>※サークル名でお振り込みされた場合は記入不要
-                  .form-group__val
+                  .form-group__val.form-input
+                    label お支払い名義（カタカナで入力）<br>※サークル名でお振り込みされた場合は記入不要
                     input.input-text(type="text" name="paidName" v-model="contact.paidName")
-                button.button(type="submit") 確認
 
               // その他のご連絡・お問い合わせ
               .form-section(v-if="contact.inquiryCategory === 'others'")
                 .form-group
-                  .form-group__key お問い合わせ内容
-                  .form-group__val
+                  .form-group__val.form-textarea
+                    label お問い合わせ内容
                     textarea.input-textarea(name="body" v-model="contact.body")
-                button.button(type="submit") 確認
+              .form-section
+                .form-group
+                  button.button-submit(type="submit") 確認
 
           .form-section(v-if="contact.event === 'nilgiri' || (contact.isCircle !== 'nilgiri' && contact.isCircle === false)")
             .form-group
-              .form-group__key メールアドレス
+              .form-group__key ご連絡先のメールアドレス
               .form-group__val
                 input.input-text(type="email" name="mail" v-model="contact.mail")
             .form-group
-              .form-group__key 名前
+              .form-group__key お名前
               .form-group__val
                 input.input-text(type="text" name="name" class="c-input-text" v-model="contact.name")
             .form-group
               .form-group__key お問い合わせ内容
               .form-group__val
                 textarea.input-textarea(name="body" v-model="contact.body")
-            button.button(type="submit") 確認
+            .form-group
+              button.button-submit(type="submit") 確認
 </template>
 
 <script>
@@ -236,15 +238,162 @@ export default {
 
 <style lang="scss" scoped>
 .form-group {
-  & + .form-group {
-    margin-top: 30px;
-  }
+  margin-top: 30px;
 }
 .form-section {
-  &:not(:first-child) {
-    margin-top: 50px;
+  margin-top: 4em;
+}
+.contactWrapper {
+  max-width: 900px;
+  margin: 0  auto;
+  form {
+    width: 100%;
+    background-color: #fff;
+    .form-group {
+      width: 100%;
+      position: relative;
+    }
+    .form-header {
+      font-weight: normal;
+      padding: 1em 0;
+      box-sizing: border-box;
+    }
+    .form-value {}
   }
 }
+.form-input,
+.form-textarea {
+  color: #333;
+  label {
+    display: block;
+    font-size: 14px;
+    margin-bottom: .4em;
+  }
+}
+.input-text,
+.input-textarea {
+  width: 100%;
+  padding: 8px 10px;
+  border: 1px solid #d2d2d2;
+  border-radius: 3px;
+  box-sizing: border-box;
+  font-size: 1em;
+  line-height: 1.5;
+  background: #f7f7f7;
+  &::placeholder {
+    color: #999;
+  }
+}
+
+.form-radio {
+  border: none;
+  label {
+    display: flex;
+    align-items: center;
+    gap: 0 .5em;
+    position: relative;
+    margin-bottom: .4em;
+    padding: .5em .7em;
+    border: 1px solid #2589d0;
+    border-radius: 3px;
+    background-color: #f7f7f7;
+    cursor: pointer;
+    &:has(:checked) {
+      background-color: #2589d0;
+      color: #fff;
+    }
+    &:before,
+    &:has(:checked)::after {
+      border-radius: 50%;
+      content: '';
+    }
+    &:before {
+      width: 14px;
+      height: 14px;
+      background-color: #fff;
+      border: 1px solid #2589d0;
+    }
+    &:has(:checked)::after {
+      position: absolute;
+      top: 50%;
+      left: calc(8px + .7em);
+      transform: translate(-50%, -50%);
+      width: 7px;
+      height: 7px;
+      background-color: #2589d0;
+    }
+  }
+  input {
+    display: none;
+  }
+}
+.input-select {
+  position: relative;
+  &::before,
+  &::after {
+    position: absolute;
+    content: '';
+    pointer-events: none;
+  }
+  &::before {
+    right: 0;
+    display: inline-block;
+    width: 2.8em;
+    height: 2.8em;
+    border-radius: 0 3px 3px 0;
+    background-color: #2589d0;
+    content: '';
+  }
+  &::after {
+    position: absolute;
+    top: 50%;
+    right: 1.4em;
+    transform: translate(50%, -50%) rotate(45deg);
+    width: 6px;
+    height: 6px;
+    border-bottom: 3px solid #fff;
+    border-right: 3px solid #fff;
+    content: '';
+  }
+  select {
+    width: 100%;
+    appearance: none;
+    min-width: 230px;
+    height: 2.8em;
+    padding: .4em 3.6em .4em .8em;
+    border: 1px solid #2589d0;
+    border-radius: 3px;
+    color: #333333;
+    font-size: 1em;
+    cursor: pointer;
+    &:focus {
+      outline: 1px solid #2589d0;
+    }
+  }
+}
+.button-submit {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 250px;
+  margin:0 auto;
+  padding: .9em 2em;
+  border: 1px solid #2589d0;
+  border-radius: 5px;
+  background-color: #fff;
+  color: #2589d0;
+  font-size: 1em;
+}
+.form-header {
+  font-size: 20px;
+}
+.form-note {
+  font-size: 14px;
+  & + .form-note {
+    margin-top: 1em;
+  }
+}
+
 @media screen and (min-width: 751px) {
   .section.section-link {
     ul.links {
@@ -269,6 +418,9 @@ export default {
   }
 }
 @media screen and (max-width: 750px) {
+  .contactWrapper {
+    width: 95%;
+  }
   .section.section-link {
     ul.links {
       margin-top: 10px;
