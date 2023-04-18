@@ -41,7 +41,7 @@ export const mutations = {
   remove (state) {
     state.event = null;
     state.isCircle = null;
-    state.inquiryCategory = '';
+    // state.inquiryCategory = '';
     state.ticketCount = 0;
     state.chairCount = 0;
     state.paidDate = '';
