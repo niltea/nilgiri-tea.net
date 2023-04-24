@@ -74,8 +74,8 @@ export default {
   // Build Configuration: https://go.nuxtjs.dev/config-build
   build: {
     filenames: {
-      app  : ({ isDev }) => isDev ? '[name].[hash].js' : '[chunkhash].js',
-      chunk: ({ isDev }) => isDev ? '[name].[hash].js' : '[chunkhash].js',
+      // app  : ({ isDev }) => isDev ? '[name].[hash].js' : '[chunkhash].js',
+      // chunk: ({ isDev }) => isDev ? '[name].[hash].js' : '[chunkhash].js',
     },
   },
   env: {

@@ -27,7 +27,7 @@ router.post('/checkout', async (req, res) => {
 });
 // get
 router.get('/checkout', async (req, res) => {
-  res.json({ id: '', text: 'can\'t get this api' });
+  res.json({ id: '', text: 'checkout: can\'t get this api' });
 });
 
 module.exports = router;

@@ -8,9 +8,11 @@ app.use(bodyParser.json());
 
 // Require API routes
 const checkout = require('./routes/checkout');
+const mailer = require('./routes/mailer');
 
 // Import API Routes
 app.use(checkout);
+app.use(mailer);
 
 // Export express app
 module.exports = app;

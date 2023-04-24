@@ -85,7 +85,39 @@ export default {
     }
   },
   methods: {
-    submit () {
+    async submit () {
+      const payload = {
+        event          : this.contactData.event,
+        isCircle       : this.contactData.isCircle,
+        inquiryCategory: this.contactData.inquiryCategory,
+        ticketCount    : this.contactData.ticketCount,
+        chairCount     : this.contactData.chairCount,
+        paidDate       : this.contactData.paidDate,
+        paidPrice      : this.contactData.paidPrice,
+        paidName       : this.contactData.paidName,
+        name           : this.contactData.name,
+        circleName     : this.contactData.circleName,
+        mail           : this.contactData.mail,
+        body           : this.contactData.body,
+      };
+
+      const response = await this.$axios.post(
+        `${window.location.origin}/api/mailer`,
+        {
+          payload,
+        })
+        .catch((err) => {
+          throw new Error(err);
+        });
+      console.log(response);
+      if (response.data.error === true) {
+        this.errorMessage = response.text;
+        console.log('err');
+        console.log(response.err);
+        return;
+      }
+      console.log('ok');
+      console.log(response);
       // 送信後、storeに保存していたデータを破棄
       this.$store.dispatch('inquiry/removeAction');
       // 確認画面に遷移
