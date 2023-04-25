@@ -61,14 +61,17 @@
               .form-group
                 .form-group__val.form-input
                   label ご連絡先のメールアドレス
-                  input.input-text(type="email" name="mail" v-model="contact.mail")
+                  .err(v-if="error.mail === true") メールアドレスが正しく入力されていません
+                  input.input-text(name="mail" v-model="contact.mail")
               .form-group
                 .form-group__val.form-input
                   label サークル名
+                  .err(v-if="error.circleName === true") サークル名が入力されていません
                   input.input-text(type="text" name="circleName" class="c-input-text" v-model="contact.circleName")
               .form-group
                 .form-group__val.form-input
                   label ペンネーム
+                  .err(v-if="error.name === true") ペンネームが入力されていません
                   input.input-text(type="text" name="name" class="c-input-text" v-model="contact.name")
               .form-group
                 .form-header お問い合わせ種別を選択してください。
@@ -87,16 +90,21 @@
                     | その他のご連絡・お問い合わせ
 
               // サークル参加申込内容の修正・変更（オプション追加以外）
-              .form-group(v-if="contact.inquiryCategory === 'correction'")
-                .form-header 変更後の参加情報
-                p.form-note
-                  |変更後の参加情報をお知らせください。
-                  br
-                  |どの項目を変更するか、お申込み確認メールを参照し明記してください。
-                  br
-                  |変更内容だけの記載しかない場合、ご対応できない場合があります。
-                .form-value.form-textarea
-                  textarea.input-textarea(name="body" v-model="contact.body")
+              .form-section(v-if="contact.inquiryCategory === 'correction'")
+                .form-group
+                  .form-header 変更後の参加情報
+                  p.form-note
+                    |変更後の参加情報をお知らせください。
+                    br
+                    |どの項目を変更するか、お申込み確認メールを参照し明記してください。
+                    br
+                    |変更内容だけの記載しかない場合、ご対応できない場合があります。
+                  .form-value.form-textarea
+                    .err(v-if="error.body === true") 変更内容が入力されていません
+                    textarea.input-textarea(name="body" v-model="contact.body")
+                .form-group
+                  .err(v-if="error.body === true") 変更内容が入力されていません
+                  button.button-submit(type="submit") 確認
 
               // サークル通行証または椅子の追加
               .form-section(v-if="contact.inquiryCategory === 'addOptions'")
@@ -137,6 +145,8 @@
                   .form-group__key ご連絡事項
                   .form-group__val
                     textarea.input-textarea(name="body" v-model="contact.body")
+                .form-group
+                  button.button-submit(type="submit") 確認
 
               // 参加費ご入金連絡（銀行振込）
               .form-section(v-if="contact.inquiryCategory === 'reportPayment'")
@@ -159,29 +169,34 @@
                   .form-group__val.form-input
                     label お支払い名義（カタカナで入力）<br>※サークル名でお振り込みされた場合は記入不要
                     input.input-text(type="text" name="paidName" v-model="contact.paidName")
+                .form-group
+                  button.button-submit(type="submit") 確認
 
               // その他のご連絡・お問い合わせ
               .form-section(v-if="contact.inquiryCategory === 'others'")
                 .form-group
                   .form-group__val.form-textarea
                     label お問い合わせ内容
+                    .err(v-if="error.body === true") お問い合わせ内容が入力されていません
                     textarea.input-textarea(name="body" v-model="contact.body")
-              .form-section
                 .form-group
                   button.button-submit(type="submit") 確認
 
           .form-section(v-if="contact.event === 'nilgiri' || (contact.isCircle !== 'nilgiri' && contact.isCircle === false)")
             .form-group
-              .form-group__key ご連絡先のメールアドレス
-              .form-group__val
-                input.input-text(type="email" name="mail" v-model="contact.mail")
+              .form-group__val.form-input
+                label ご連絡先のメールアドレス
+                .err(v-if="error.mail === true") メールアドレスが正しく入力されていません
+                input.input-text(name="mail" v-model="contact.mail")
             .form-group
-              .form-group__key お名前
-              .form-group__val
+              .form-group__val.form-input
+                label お名前
+                .err(v-if="error.name === true") お名前が入力されていません
                 input.input-text(type="text" name="name" class="c-input-text" v-model="contact.name")
             .form-group
               .form-group__key お問い合わせ内容
               .form-group__val
+                .err(v-if="error.body === true") お問い合わせ内容が入力されていません
                 textarea.input-textarea(name="body" v-model="contact.body")
             .form-group
               button.button-submit(type="submit") 確認
@@ -205,6 +220,13 @@ export default {
         mail           : '',
         body           : '',
       },
+      error: {
+        hasError  : false,
+        mail      : false,
+        name      : false,
+        body      : false,
+        circleName: false,
+      },
     };
   },
   created () {
@@ -226,7 +248,30 @@ export default {
     this.$store.dispatch('inquiry/resetOKFlag');
   },
   methods: {
+    checkForm () {
+      // メールチェック
+      const reg = /^[A-Za-z0-9]{1}[A-Za-z0-9_.-]*@{1}[A-Za-z0-9_.-]{1,}\.[A-Za-z0-9]{1,}$/;
+      this.error.mail = !reg.test(this.contact.mail);
+      // 名前チェック
+      this.error.name = (this.contact.name === '');
+      // body
+      if (!this.contact.isCircle) {
+        this.error.body = (this.contact.body === '');
+        this.error.circleName = false;
+      } else {
+        this.error.body = false;
+        this.error.circleName = (this.contact.circleName === '');
+        if (!(this.contact.inquiryCategory === 'addOptions' || this.contact.inquiryCategory === 'reportPayment')) {
+          this.error.body = (this.contact.body === '');
+        }
+      }
+      this.error.hasError = (this.error.mail || this.error.name || this.error.body || this.error.circleName);
+    },
     submit () {
+      this.checkForm();
+      if (this.error.hasError === true) {
+        return;
+      }
       // storeに保存
       this.$store.dispatch('inquiry/setFormData', this.contact);
       // 確認画面に遷移
@@ -442,5 +487,8 @@ export default {
       font-size: 18px;
     }
   }
+}
+.err {
+  color: red;
 }
 </style>
