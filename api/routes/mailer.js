@@ -11,8 +11,8 @@ const options = {
     rejectUnauthorized: false,
   },
   auth: { // 認証情報
-    user: 'niltea@nilgiri-tea.net', // ユーザー名
-    pass: '', // パスワード
+    user: process.env.MAIL_USERNAME, // ユーザー名
+    pass: process.env.MAIL_APP_PASS, // パスワード
   },
 };
 
