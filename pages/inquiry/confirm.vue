@@ -50,8 +50,9 @@
             .confirm-key(v-else-if="contactData.inquiryCategory === 'addOptions'") ご連絡事項
             .confirm-key(v-else) お問い合わせ内容
             .confirm-group__val {{contactData.body}}
-          button.button-submit(type="submit") 送信
-          NuxtLink.button-submit(to="/inquiry/") 修正
+          .button-wrapper
+            button.button-submit(disabled="disabled"): NuxtLink.button-inner(to="/inquiry/") 修正
+            button.button-submit(type="submit"): span.button-inner 送信
 </template>
 
 <script>
@@ -132,21 +133,39 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.button-wrapper {
+  display: flex;
+  width: 520px;
+  margin: 0 auto;
+}
 .button-submit {
   display: flex;
   justify-content: center;
   align-items: center;
   width: 250px;
   margin:0 auto;
-  padding: .9em 2em;
+  padding: 0;
   border: 1px solid #2589d0;
   border-radius: 5px;
   background-color: #fff;
-  color: #2589d0;
-  font-size: 18px;
-  font-weight: 400;
-  text-decoration: none;
   box-sizing: border-box;
+  .button-inner {
+    font-size: 18px;
+    font-weight: 400;
+    text-decoration: none;
+    display: block;
+    padding: .9em 2em;
+    width: 100%;
+    height: 100%;
+    color: #2589d0;
+    box-sizing: border-box;
+  }
+  &:hover {
+    background-color: #2589d0;
+    .button-inner {
+      color: #fff;
+    }
+  }
 }
 @media screen and (min-width: 751px) {
   .section.section-link {

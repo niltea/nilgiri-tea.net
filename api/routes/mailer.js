@@ -83,7 +83,7 @@ router.post('/mailer', async (req, res) => {
   const mail = createSubject(payload);
   console.log(mail);
   const mailData = {
-    from   : 'no-return@nilgiri-tea.net',
+    from   : 'inquiry@nilgiri-tea.net',
     replyTo: payload.mail,
     to     : 'niltea@nilgiri-tea.net',
     subject: mail.subject,

@@ -103,7 +103,7 @@
                     .err(v-if="error.body === true") 変更内容が入力されていません
                     textarea.input-textarea(name="body" v-model="contact.body")
                 .form-group
-                  .err(v-if="error.body === true") 変更内容が入力されていません
+                  .err.center(v-if="error.hasError === true") 入力項目にエラーがあります。
                   button.button-submit(type="submit") 確認
 
               // サークル通行証または椅子の追加
@@ -146,6 +146,7 @@
                   .form-group__val
                     textarea.input-textarea(name="body" v-model="contact.body")
                 .form-group
+                  .err.center(v-if="error.hasError === true") 入力項目にエラーがあります。
                   button.button-submit(type="submit") 確認
 
               // 参加費ご入金連絡（銀行振込）
@@ -170,6 +171,7 @@
                     label お支払い名義（カタカナで入力）<br>※サークル名でお振り込みされた場合は記入不要
                     input.input-text(type="text" name="paidName" v-model="contact.paidName")
                 .form-group
+                  .err.center(v-if="error.hasError === true") 入力項目にエラーがあります。
                   button.button-submit(type="submit") 確認
 
               // その他のご連絡・お問い合わせ
@@ -180,6 +182,7 @@
                     .err(v-if="error.body === true") お問い合わせ内容が入力されていません
                     textarea.input-textarea(name="body" v-model="contact.body")
                 .form-group
+                  .err.center(v-if="error.hasError === true") 入力項目にエラーがあります。
                   button.button-submit(type="submit") 確認
 
           .form-section(v-if="contact.event === 'nilgiri' || (contact.isCircle !== 'nilgiri' && contact.isCircle === false)")
@@ -199,6 +202,7 @@
                 .err(v-if="error.body === true") お問い合わせ内容が入力されていません
                 textarea.input-textarea(name="body" v-model="contact.body")
             .form-group
+              .err.center(v-if="error.hasError === true") 入力項目にエラーがあります。
               button.button-submit(type="submit") 確認
 </template>
 
@@ -287,16 +291,23 @@ export default {
 }
 .form-section {
   margin-top: 4em;
+  &:first-child {
+    margin-top: 0;
+  }
 }
 .contactWrapper {
   max-width: 900px;
-  margin: 0  auto;
+  margin: 0 auto;
   form {
     width: 100%;
     background-color: #fff;
+    padding: 1em;
     .form-group {
       width: 100%;
       position: relative;
+      &:first-child {
+        margin-top: 0;
+      }
     }
     .form-header {
       font-weight: normal;
@@ -427,7 +438,14 @@ export default {
   border-radius: 5px;
   background-color: #fff;
   color: #2589d0;
-  font-size: 1em;
+  font-size: 18px;
+  &:hover {
+    background-color: #2589d0;
+    color: #fff;
+    .button-inner {
+      color: #fff;
+    }
+  }
 }
 .form-header {
   font-size: 20px;
@@ -490,5 +508,9 @@ export default {
 }
 .err {
   color: red;
+  margin: .5em 0;
+  &.center {
+    text-align: center;
+  }
 }
 </style>
