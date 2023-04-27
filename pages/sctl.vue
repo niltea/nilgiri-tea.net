@@ -14,7 +14,7 @@ export default {
   },
   head () {
     return {
-      title: 'プライバシーポリシー',
+      title: '特定商取引法に基づく表記',
       meta : [
         { hid: 'og:description', property: 'og:description', content: 'Nilgiri Tea のプライバシーポリシーです' },
       ],
