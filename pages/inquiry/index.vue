@@ -233,6 +233,12 @@ export default {
       },
     };
   },
+  mounted () {
+    const queryEvent = this.$nuxt.$route.query.event;
+    if (queryEvent === 'vggc' || queryEvent === 'holokle') {
+      this.contact.event = queryEvent;
+    }
+  },
   created () {
     const contactData = this.$store.getters['inquiry/getContact'];
     // データコピー
