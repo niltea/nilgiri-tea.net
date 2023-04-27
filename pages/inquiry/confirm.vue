@@ -6,46 +6,50 @@
       .confirmWrapper
         h2 お問い合わせ内容の確認
         form(v-on:submit.prevent="submit")
-          .form-group
-            .form-key イベント
-            .form-value {{eventName}}
-          .form-group
-            .form-key お名前
-            .form-val {{contactData.name}}
-          .form-group
-            .form-group__key メールアドレス
-            .form-group__val {{contactData.mail}}
+          .confirm-group
+            .confirm-key お問い合わせ先イベント
+            .confirm-value {{eventName}}
+          .confirm-group(v-if="contactData.isCircle")
+            .confirm-key サークル名
+            .confirm-value {{contactData.circleName}}
+          .confirm-group
+            .confirm-key(v-if="!contactData.isCircle") お名前
+            .confirm-key(v-else) ペンネーム
+            .confirm-value {{contactData.name}}
+          .confirm-group
+            .confirm-key メールアドレス
+            .confirm-group__val {{contactData.mail}}
 
           //- サークル
           .confirm-section(v-if="contactData.isCircle")
             //- 内容修正は特記事項無し
             //- オプション追加
             .confirm-section(v-if="contactData.inquiryCategory === 'addOptions'")
-              h3 追加内容
-              .form-group
-                .form-group__key 通行証の追加枚数
-                .form-value {{contactData.ticketCount}}枚
-              .form-group
-                .form-group__key 椅子の追加数
-                .form-value {{contactData.chairCount}}脚
+              //- h3 追加内容
+              .confirm-group
+                .confirm-key 通行証の追加枚数
+                .confirm-value {{contactData.ticketCount}}枚
+              .confirm-group
+                .confirm-key 椅子の追加数
+                .confirm-value {{contactData.chairCount}}脚
 
             //- 振込連絡
             .confirm-section(v-if="contactData.inquiryCategory === 'reportPayment'")
-              h3 お振り込み内容
-              .form-group
-                .form-group__key お支払い日
-                .form-value {{contactData.paidDate}}
-              .form-group
-                .form-group__key お支払い金額
-                .form-value {{contactData.paidPrice}}
-              .form-group
-                .form-group__key お支払い名義
-                .form-value {{contactData.paidName}}
-          .form-group(v-if="contactData.inquiryCategory !== 'reportPayment'")
-            .form-group__key(v-if="contactData.inquiryCategory === 'correction'") 修正内容
-            .form-group__key(v-else-if="contactData.inquiryCategory === 'addOptions'") ご連絡事項
-            .form-group__key(v-else) お問い合わせ内容
-            .form-group__val {{contactData.body}}
+              //- h3 お振り込み内容
+              .confirm-group
+                .confirm-key お支払い日
+                .confirm-value {{contactData.paidDate}}
+              .confirm-group
+                .confirm-key お支払い金額
+                .confirm-value {{contactData.paidPrice}}
+              .confirm-group
+                .confirm-key お支払い名義
+                .confirm-value {{contactData.paidName}}
+          .confirm-group(v-if="contactData.inquiryCategory !== 'reportPayment'")
+            .confirm-key(v-if="contactData.inquiryCategory === 'correction'") 修正内容
+            .confirm-key(v-else-if="contactData.inquiryCategory === 'addOptions'") ご連絡事項
+            .confirm-key(v-else) お問い合わせ内容
+            .confirm-group__val {{contactData.body}}
           button.button-submit(type="submit") 送信
           NuxtLink.button-submit(to="/inquiry/") 修正
 </template>
@@ -188,6 +192,16 @@ export default {
       margin-top: 15px;
       font-size: 18px;
     }
+  }
+}
+.confirm-group {
+  .confirm-key {
+    position: relative;
+    margin: 1.4em 0 0.8em;
+    padding: .5em .7em;
+    border-radius: 3px;
+    background-color: #2589d0;
+    color: #fff;
   }
 }
 </style>
