@@ -54,6 +54,8 @@
 
             .form-group.passCount
               p.lead 通行証の追加数を選択してください
+                br
+                |準備会より指示があった場合を除き、数量変更は行わないでください。
               .radio-group.form-item
                 input#pass-0(type="radio" name="pass", value="0", v-model="passCount")
                 label(for="pass-0") なし
@@ -64,6 +66,8 @@
 
             .form-group.chairCount
               p.lead 追加椅子の数を選択してください
+                br
+                |準備会より指示があった場合を除き、数量変更は行わないでください。
               .radio-group.form-item
                 input#chair-0(type="radio" name="chair", value="0", v-model="chairCount")
                 label(for="chair-0") なし
@@ -104,6 +108,8 @@
         .form-group
           button.button.prev(@click="cancelPayment") 内容を修正する
           button.button.next(@click="checkout") 決済を行う
+        .form-text
+          p.lead 準備会より指示があった場合を除き、<br>「内容を修正する」から椅子・通行証の追加数変更は行わないでください。
       .sctl
         a(v-if="eventID",
           :href="`${eventOptions.url}sctl`",
