@@ -81,7 +81,6 @@ router.get('/mailer', (req, res) => {
 router.post('/mailer', async (req, res) => {
   const payload = req.body.payload;
   const mail = createSubject(payload);
-  console.log(mail);
   const mailData = {
     from   : 'inquiry@nilgiri-tea.net',
     replyTo: payload.mail,
@@ -92,13 +91,18 @@ router.post('/mailer', async (req, res) => {
   };
   try {
     const transport = nodemailer.createTransport(options);
-    const result = await transport.sendMail(mailData);
+    const sendMeResult = await transport.sendMail(mailData);
+    mailData.to = payload.mail;
+    const sendThemResult = await transport.sendMail(mailData);
     // console.log('+++ Sent +++');
     // console.log(result);
     res.json({
-      text : 'ok',
-      error: false,
-      result,
+      text  : 'ok',
+      error : false,
+      result: {
+        sendMeResult,
+        sendThemResult,
+      },
     });
   } catch (err) {
     // console.log('--- Error ---');
