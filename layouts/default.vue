@@ -80,7 +80,7 @@ h2 {
     margin-top: 80px;
   }
   h2 {
-    font-size: 32px;
+    font-size: 28px;
     margin-top: 40px;
     margin-bottom: 15px;
     &:first-child {
@@ -88,7 +88,7 @@ h2 {
     }
   }
   p {
-    font-size: 12px;
+    font-size: 14px;
     line-height: 2em;
   }
   ul {
