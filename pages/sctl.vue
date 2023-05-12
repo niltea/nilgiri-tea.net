@@ -1,6 +1,7 @@
 <template lang="pug">
   .page-wrapper.privacy
     PageHeader
+    h2 {{page.title}}
     nuxt-content(:document="page")
 </template>
 
@@ -14,7 +15,7 @@ export default {
   },
   head () {
     return {
-      title: '特定商取引法に基づく表記',
+      title: this.page.title,
       meta : [
         { hid: 'og:description', property: 'og:description', content: 'Nilgiri Tea の特定商取引法に基づく表記です' },
       ],

@@ -9,9 +9,9 @@
           br
           |こちらはクレジット決済専用です。
           br
-          |銀行振込の場合は、メールに記載の口座へにご送金ください。
+          |銀行振込の場合は、メールにて振込情報をご請求ください。
         .form-group
-          .radio-group.form-item
+          .radio-group.form-item.chooseEvent
             template(v-for="event in events")
               input(:id="`event-${event.event_id}`", type="radio", name="event", :value="event.event_id", v-model="selectEvent")
               label(:for="`event-${event.event_id}`") {{event.name}}
@@ -561,6 +561,14 @@ button {
       margin-top: 15px;
       font-size: 18px;
     }
+  }
+}
+
+.chooseEvent {
+  flex-wrap: wrap;
+  label {
+    flex: auto;
+    max-width: 33%;
   }
 }
 </style>

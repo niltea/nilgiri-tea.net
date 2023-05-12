@@ -2,8 +2,8 @@
   footer#mainFooter
     .inner
       .footer-notes
-        p: NuxtLink(to="/privacy") プライバシーポリシー
-        p: NuxtLink(to="/sctl") 特定商取引法に関する表示
+        p: NuxtLink(to="/privacy/") プライバシーポリシー
+        p: NuxtLink(to="/sctl/") 特定商取引法に関する表示
         p 本サイトに掲載の各作品の原作者様・関係者様・制作会社様等とは一切関係ありません。
         p Copyright© 2021 Nilgiri Tea All rights reserved.
 
