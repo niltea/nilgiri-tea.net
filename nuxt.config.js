@@ -86,9 +86,4 @@ export default {
     STRIPE_SECRET    : process.env.STRIPE_SECRET,
     STRIPE_KEY       : process.env.STRIPE_KEY,
   },
-  server: {
-    port  : 3000,
-    host  : '0.0.0.0', // デフォルト: localhost,
-    timing: false,
-  },
 };
