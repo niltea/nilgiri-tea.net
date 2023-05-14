@@ -99,18 +99,20 @@
               |参加費 {{ spaceCount }}スペース: {{ fee.space }}円
             span(v-if="passCount !== '0'")
               br(v-if="eventOptions.event_id !== 'options'")
-              |追加サークル通行証 {{ passCount }}枚: {{ fee.pass }}円
+              .errorOnConfirm(v-if="hasPassError") 通行証は1スペースあたり1名分まで追加可能です。<br>通行証追加枚数を{{ passCount }}名分へ修正しました。<br>
+              |追加サークル通行証 {{ passCount }}名分: {{ fee.pass }}円
             span(v-if="chairCount !== '0'")
               br
+              .errorOnConfirm(v-if="hasChairError") 追加椅子は1スペースあたり1脚まで追加可能です。<br>追加椅子を{{ chairCount }}脚へ修正しました。<br>
               |追加椅子 {{ chairCount }}脚: {{ fee.chair }}円
             span(v-if="promoAttached.isValid === true")
               br
               |コード割引 -{{ this.promoAttached.price }}円
+        .form-text
+          p.lead 準備会より指示があった場合を除き、<br>「内容を修正する」から椅子・通行証の追加数変更は行わないでください。
         .form-group
           button.button.prev(@click="cancelPayment") 内容を修正する
           button.button.next(@click="checkout") 決済を行う
-        .form-text
-          p.lead 準備会より指示があった場合を除き、<br>「内容を修正する」から椅子・通行証の追加数変更は行わないでください。
       .sctl
         a(v-if="eventID",
           :href="`${eventOptions.url}sctl`",
@@ -177,6 +179,8 @@ export default {
       formPromoCode: '',
       confirmed    : false,
       hasError     : false,
+      hasPassError : false,
+      hasChairError: false,
     };
   },
   computed: {
@@ -240,10 +244,20 @@ export default {
     const query = this.$route.query;
     if (query.space && query.space > '0' && query.space < '3') { this.spaceCount = query.space; }
     if (query.pass && this.eventOptions.price_pass !== '0' && query.pass > '0' && query.pass < '3') {
-      this.passCount = parseInt(query.pass, 10);
+      const passCount = parseInt(query.pass, 10);
+      this.passCount = passCount;
+      if (this.spaceCount < passCount) {
+        this.hasPassError = true;
+        this.passCount = this.spaceCount;
+      }
     }
     if (query.chair && this.eventOptions.price_chair !== '0' && query.chair > '0' && query.chair < '3') {
-      this.chairCount = parseInt(query.chair, 10);
+      const chairCount = parseInt(query.chair, 10);
+      this.chairCount = chairCount;
+      if (this.spaceCount < chairCount) {
+        this.hasChairError = true;
+        this.chairCount = this.spaceCount;
+      }
     }
     if (query.name) { this.circleName = decodeURI(query.name); }
     if (query.id) { this.circleID = query.id; }
@@ -277,6 +291,8 @@ export default {
       } else {
         // エラーがなければ確認済フラグを立てる
         this.confirmed = true;
+        this.hasPassError = false;
+        this.hasChairError = false;
       }
     },
     cancelPayment () {
@@ -414,6 +430,11 @@ h3 {
   margin-top: 30px;
   text-align: center;
   font-size: 24px;
+  color: $red;
+}
+.errorOnConfirm {
+  font-size: 15px;
+  line-height: 1.5em;
   color: $red;
 }
 .payment {
