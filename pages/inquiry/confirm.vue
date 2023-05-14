@@ -41,7 +41,7 @@
                 .confirm-value {{contactData.paidDate}}
               .confirm-group
                 .confirm-key お支払い金額
-                .confirm-value {{contactData.paidPrice}}
+                .confirm-value {{contactData.paidPrice}}円
               .confirm-group
                 .confirm-key お支払い名義
                 .confirm-value {{contactData.paidName}}

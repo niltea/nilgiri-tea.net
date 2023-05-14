@@ -156,17 +156,19 @@
                   | スムーズにお支払いを確認するため、お支払い情報をご記載ください。
                   br
                   | 必ず入金後にご連絡をお願いします。
-                  br
-                  | また、既に準備会より入金確認のご連絡を行っている場合、本フォームでの報告は不要です。
+                p.form-note
+                  | 既に準備会より入金確認のご連絡を行っている場合、本フォームでの報告は不要です。
                   br
                   | クレジットカード決済の場合も自動で必要事項を取得していますのでご連絡不要です。
                 .form-group
                   .form-group__val.form-input
                     label お支払い日
+                    .err(v-if="error.paidDate === true") 本日より先の日付は入力できません。
                     input.input-text(type="date" name="paidDate" v-model="contact.paidDate")
                 .form-group
                   .form-group__val.form-input
                     label お支払い金額
+                    .err(v-if="error.paidPrice === true") 金額の入力にエラーがあります。
                     input.input-text(type="number" name="paidPrice" v-model="contact.paidPrice")
                 .form-group
                   .form-group__val.form-input
@@ -232,6 +234,8 @@ export default {
         name      : false,
         body      : false,
         circleName: false,
+        paidDate  : false,
+        paidPrice : false,
       },
     };
   },
@@ -266,18 +270,32 @@ export default {
       this.error.mail = !reg.test(this.contact.mail);
       // 名前チェック
       this.error.name = (this.contact.name === '');
+      this.error.hasError = (this.error.mail || this.error.name);
       // body
       if (!this.contact.isCircle) {
+        // 一般参加者
         this.error.body = (this.contact.body === '');
         this.error.circleName = false;
+        this.error.hasError = (this.error.hasError || this.error.body);
       } else {
+        // サークル
         this.error.body = false;
         this.error.circleName = (this.contact.circleName === '');
         if (!(this.contact.inquiryCategory === 'addOptions' || this.contact.inquiryCategory === 'reportPayment')) {
           this.error.body = (this.contact.body === '');
         }
+        this.error.hasError = (this.error.hasError || this.error.body || this.error.circleName);
+        if (this.contact.inquiryCategory === 'reportPayment') {
+          // 支払連絡
+          // お支払い日
+          this.error.paidDate = (new Date(this.contact.paidDate) > new Date());
+
+          // お支払い金額
+          this.error.paidPrice = (parseInt(this.contact.paidPrice, 10) < 1000);
+          this.error.hasError = (this.error.hasError || this.error.paidDate || this.error.paidPrice);
+        }
       }
-      this.error.hasError = (this.error.mail || this.error.name || this.error.body || this.error.circleName);
+      this.error.hasError = (this.error.hasError || this.error.body || this.error.circleName);
     },
     submit () {
       this.checkForm();

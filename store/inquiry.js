@@ -32,6 +32,9 @@ export const state = () => ({
 export const mutations = {
   setData (state, payload) {
     keys.forEach((key) => {
+      if (key === 'paidPrice') {
+        payload[key] = parseInt(payload[key], 10);
+      }
       if (payload[key] !== undefined) {
         state[key] = payload[key];
       }
