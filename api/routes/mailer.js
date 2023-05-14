@@ -93,6 +93,7 @@ router.post('/mailer', async (req, res) => {
     const transport = nodemailer.createTransport(options);
     const sendMeResult = await transport.sendMail(mailData);
     mailData.to = payload.mail;
+    mailData.replyTo = 'inquiry@nilgiri-tea.net';
     const sendThemResult = await transport.sendMail(mailData);
     // console.log('+++ Sent +++');
     // console.log(result);
