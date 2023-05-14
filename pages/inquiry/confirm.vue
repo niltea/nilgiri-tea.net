@@ -51,12 +51,17 @@
             .confirm-key(v-else) お問い合わせ内容
             .confirm-group__val {{contactData.body}}
           .button-wrapper
-            button.button-submit(disabled="disabled"): NuxtLink.button-inner(to="/inquiry/") 修正
-            button.button-submit(type="submit"): span.button-inner 送信
+            button.button-submit(disabled="disabled", :class="{isProgress}"): NuxtLink.button-inner(to="/inquiry/") 修正
+            button.button-submit(type="submit", :disabled="isProgress", :class="{isProgress}"): span.button-inner 送信
 </template>
 
 <script>
 export default {
+  data () {
+    return {
+      isProgress: false,
+    };
+  },
   computed: {
     contactData () {
       return this.$store.getters['inquiry/getContact'];
@@ -105,6 +110,7 @@ export default {
         mail           : this.contactData.mail,
         body           : this.contactData.body,
       };
+      this.isProgress = true;
 
       const response = await this.$axios.post(
         `${window.location.origin}/api/mailer`,
@@ -160,7 +166,11 @@ export default {
     color: #2589d0;
     box-sizing: border-box;
   }
-  &:hover {
+  &.isProgress {
+    opacity: 0.5;
+    pointer-events: none;
+  }
+  &:not(.isProgress):hover {
     background-color: #2589d0;
     .button-inner {
       color: #fff;
