@@ -34,7 +34,7 @@
           .form-visual
             img(:src="eventOptions.image.url", :alt="eventOptions.name")
           .form-content
-            .errorMessage(v-if="errorMessage") {{ errorMessage }}
+            .errorMessage(v-if="errorMessage", v-html="errorMessage" )
             .form-group.spaceCount
               p.lead 申込時のサークル名を入力してください
               input.form-item(name="circleName", value="", v-model="circleName")
@@ -79,7 +79,8 @@
             .form-group.promoCode(v-if="eventOptions.event_id !== 'options'")
               p.lead 優待コードがある場合は入力してください
               input.form-item(name="formPromoCode", value="", v-model="formPromoCode")
-            .form-group.next
+            .errorMessage(v-if="errorMessage", v-html="errorMessage" )
+            .form-group.next(:class="{hasError}")
               button.button.next(@click="confirmPayment") 内容の確認へ
       .form.price(v-else)
         h3 決済内容の確認
@@ -175,6 +176,7 @@ export default {
       chairCount   : '0',
       formPromoCode: '',
       confirmed    : false,
+      hasError     : false,
     };
   },
   computed: {
@@ -256,10 +258,24 @@ export default {
       });
     },
     confirmPayment () {
+      this.hasError = false;
+      this.errorMessage = '';
+      const errors = [];
+      if (this.spaceCount < this.passCount) {
+        errors.push('通行証は1スペースあたり1名分まで追加可能です');
+      }
+      if (this.spaceCount < this.chairCount) {
+        errors.push('追加椅子は1スペースあたり1脚まで追加可能です');
+      }
       if (!this.circleName) {
-        this.errorMessage = 'サークル名が入力されていません';
+        errors.push('サークル名が入力されていません');
+      }
+      // 後処理
+      this.errorMessage = errors.join('<br>');
+      if (errors.length !== 0) {
+        this.hasError = true;
       } else {
-        this.errorMessage = '';
+        // エラーがなければ確認済フラグを立てる
         this.confirmed = true;
       }
     },
@@ -411,7 +427,6 @@ h3 {
     margin-top: 10px;
   }
 }
-select {}
 .form-text {
   margin: 30px 0 0;
   text-align: center;
@@ -429,6 +444,9 @@ select {}
   }
   &.next {
     margin-top: 50px;
+    &.hasError {
+      margin-top: 10px;
+    }
   }
 
   label {
