@@ -64,7 +64,11 @@ export default {
   },
 
   // Content module configuration: https://go.nuxtjs.dev/config-content
-  content: {},
+  content: {
+    api: {
+      baseURL: '/content/_content',
+    },
+  },
 
   // Server Middleware
   serverMiddleware: {
