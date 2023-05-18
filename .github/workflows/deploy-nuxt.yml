@@ -22,4 +22,4 @@ jobs:
             git checkout master
             git pull origin master
             yarn build
-            sudo systemctl restart nuxt
+            #            sudo systemctl restart nuxt
