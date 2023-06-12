@@ -27,6 +27,9 @@ export default {
       page,
     };
   },
+  mounted () {
+    console.log('05182022');
+  }
 };
 </script>
 
