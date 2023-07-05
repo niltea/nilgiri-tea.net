@@ -9,9 +9,9 @@ router.post('/checkout', async (req, res) => {
   const metadata = JSON.parse(req.body.metadata);
   const discounts = JSON.parse(req.body.discounts);
   const sessionParams = {
-    payment_method_types: ['card'],
-    line_items          : lineItems,
-    payment_intent_data : {
+    // payment_method_types: ['card'],
+    line_items         : lineItems,
+    payment_intent_data: {
       metadata,
     },
     discounts,
