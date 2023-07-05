@@ -84,7 +84,7 @@
                     | サークル通行証または椅子の追加
                   label
                     input(value="reportPayment", type="radio", name="type", v-model="contact.inquiryCategory")
-                    | 参加費ご入金連絡（銀行振込）
+                    | 参加費の銀行振込完了連絡
                   label
                     input(value="others", type="radio", name="type", v-model="contact.inquiryCategory")
                     | その他のご連絡・お問い合わせ
@@ -98,7 +98,7 @@
                     br
                     |どの項目を変更するか、お申込み確認メールを参照し明記してください。
                     br
-                    |変更内容だけの記載しかない場合、ご対応できない場合があります。
+                    |変更内容だけの記載しかない場合、ご対応できません。
                   .form-value.form-textarea
                     .err(v-if="error.body === true") 変更内容が入力されていません
                     textarea.input-textarea(name="body" v-model="contact.body")
@@ -149,13 +149,15 @@
                   .err.center(v-if="error.hasError === true") 入力項目にエラーがあります。
                   button.button-submit(type="submit") 確認
 
-              // 参加費ご入金連絡（銀行振込）
+              // 参加費の銀行振込完了連絡
               .form-section(v-if="contact.inquiryCategory === 'reportPayment'")
                 .form-header お支払い情報
                 p.form-note
                   | スムーズにお支払いを確認するため、お支払い情報をご記載ください。
                   br
-                  | 必ず入金後にご連絡をお願いします。
+                  span.red.bold 必ず、銀行振込完了後ににご連絡をお願いします。
+                  br
+                  span.bold ※銀行振込利用申請は「その他のご連絡・お問い合わせ」より行ってください
                 p.form-note
                   | 既に準備会より入金確認のご連絡を行っている場合、本フォームでの報告は不要です。
                   br
@@ -312,6 +314,12 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.red {
+  color: #f00;
+}
+.bold {
+  font-weight: 700;
+}
 .form-group {
   margin-top: 30px;
 }
