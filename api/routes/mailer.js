@@ -42,6 +42,7 @@ const guessCategory = (inquiryCategory) => {
 const createSubject = (payload) => {
   const eventName = guessEventName(payload.event);
   let html = '';
+  html += `<p>イベント：${eventName}</p><p>`;
   if (!payload.isCircle) {
     html += `<p>お問い合わせ内容：<br>${payload.body.replace(/\n/g, '<br>')}</p>`;
     return {
@@ -53,19 +54,19 @@ const createSubject = (payload) => {
   const inquiryCategory = payload.inquiryCategory;
   const categoryStr = guessCategory(inquiryCategory);
 
-  html += `<p>サークル：${payload.circleName}<br>ペンネーム：${payload.name}</p><p>`;
+  html += `<p>サークル：${payload.circleName}<br>ペンネーム：${payload.name}</p>`;
   switch (inquiryCategory) {
     case 'correction':
-      html += `訂正内容：<br>${payload.body.replace(/\n/g, '<br>')}</p>`;
+      html += `<p>訂正内容：<br>${payload.body.replace(/\n/g, '<br>')}</p>`;
       break;
     case 'addOptions':
-      html += `通行証追加数：${payload.ticketCount}<br>椅子追加数：${payload.chairCount}</p><p>備考：<br>${payload.body.replace(/\n/g, '<br>')}</p>`;
+      html += `<p>通行証追加数：${payload.ticketCount}<br>椅子追加数：${payload.chairCount}</p><p>備考：<br>${payload.body.replace(/\n/g, '<br>')}</p>`;
       break;
     case 'reportPayment':
-      html += `入金日：${payload.paidDate}<br>入金額：${payload.paidPrice}<br>入金名義：<br>${payload.paidName}</p>`;
+      html += `<p>入金日：${payload.paidDate}<br>入金額：${payload.paidPrice}<br>入金名義：<br>${payload.paidName}</p>`;
       break;
     default:
-      html += `お問い合わせ内容：<br>${payload.body.replace(/\n/g, '<br>')}</p>`;
+      html += `<p>お問い合わせ内容：<br>${payload.body.replace(/\n/g, '<br>')}</p>`;
   }
   return {
     subject: `${eventName} - ${categoryStr} / サークル: ${payload.circleName}`,
@@ -107,7 +108,7 @@ router.post('/mailer', async (req, res) => {
     });
   } catch (err) {
     // console.log('--- Error ---');
-    // console.log(err);
+    console.log(err);
     res.json({
       text : 'err',
       error: true,

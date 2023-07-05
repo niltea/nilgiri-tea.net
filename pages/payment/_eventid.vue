@@ -31,10 +31,16 @@
           br
           |銀行振込の場合は、メールに記載の口座へにご送金ください。
         .procedure-content
-          .form-visual
+          .form-visual(v-if="eventOptions.image.url")
             img(:src="eventOptions.image.url", :alt="eventOptions.name")
           .form-content
             .errorMessage(v-if="errorMessage", v-html="errorMessage" )
+            .form-group(v-if="eventOptions.event_id === 'options'")
+              p.lead オプション類の追加は各イベント指定のフォームより申請してください。
+                br
+                |準備会にて確認後、支払の指示があるまで本ページでの支払は行わないでください。
+                br
+                |指示なく支払があった場合、返金ができない場合があります。
             .form-group.spaceCount
               p.lead 申込時のサークル名を入力してください
               input.form-item(name="circleName", value="", v-model="circleName")
