@@ -42,7 +42,7 @@ const guessCategory = (inquiryCategory) => {
 const createSubject = (payload) => {
   const eventName = guessEventName(payload.event);
   let html = '';
-  html += `<p>イベント：${eventName}</p><p>`;
+  html += `<p>イベント：${eventName}</p><p>お名前：${payload.name}</p>`;
   if (!payload.isCircle) {
     html += `<p>お問い合わせ内容：<br>${payload.body.replace(/\n/g, '<br>')}</p>`;
     return {
