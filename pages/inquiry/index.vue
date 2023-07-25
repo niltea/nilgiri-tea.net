@@ -1,9 +1,10 @@
 <template lang="pug">
   .page-wrapper
-    //PageHeader
+    PageHeader
     .section.section-link
-      h2 Contact
       .contactWrapper
+        h2 Nilgiri Tea 主催イベントへのお問い合わせ
+        p 本フォームによるお問い合わせについては、一定期間内のご回答をお約束すること、<br>また、ご回答そのもののお約束をするものではありません。
         form(v-on:submit.prevent="submit")
           .form-section
             .form-group
@@ -37,6 +38,7 @@
           .form-section(v-if="contact.event === 'vggc' || contact.event === 'holokle'")
             .form-group
               .form-header サークル参加・一般参加のいずれかを選択してください。
+              p.form-note サークル参加者の方は「サークル参加」を選択してください。<br>正しく選択されない場合、ご対応が遅れる場合があります。<br>スムーズなご対応のためご協力をお願いいたします。
               .form-value.form-radio
                 label(for="isCircle-true")
                   input.input-radio#isCircle-true(
@@ -45,7 +47,7 @@
                     :value="true",
                     v-model="contact.isCircle",
                   )
-                  | サークル参加
+                  | サークル参加の方（お申込み予定含む）
                 label(for="isCircle-false")
                   input.input-radio#isCircle-false(
                     type="radio",
@@ -78,7 +80,7 @@
                 .form-value.form-radio
                   label
                     input(value="correction", type="radio", name="type", v-model="contact.inquiryCategory")
-                    | サークル参加申込内容の修正・変更（オプション追加以外）
+                    | サークル参加申込内容の修正・変更（通行証・椅子の追加を除く）
                   label
                     input(value="addOptions", type="radio", name="type", v-model="contact.inquiryCategory")
                     | サークル通行証または椅子の追加
@@ -98,7 +100,7 @@
                     br
                     |どの項目を変更するか、お申込み確認メールを参照し明記してください。
                     br
-                    |変更内容だけの記載しかない場合、ご対応できません。
+                    |変更内容だけのみ記載されている場合、ご対応できません。
                   .form-value.form-textarea
                     .err(v-if="error.body === true") 変更内容が入力されていません
                     textarea.input-textarea(name="body" v-model="contact.body")
@@ -110,18 +112,22 @@
               .form-section(v-if="contact.inquiryCategory === 'addOptions'")
                 .form-header 追加数量の選択
                 p.form-note
-                  | 通行証は標準で2名分（2スペース参加の場合は4名分）が参加費に含まれています。
+                  span.red.bold
+                    | 通行証
+                  |は標準で2名分（2スペース参加の場合は4名分）が参加費に含まれています。
                   br
                   | 頒布上必要な場合に限り、1スペースあたり1名分追加できます。
                 p.form-note
-                  | 椅子は標準で1脚（2スペース参加の場合は2脚）が参加費に含まれています。
+                  span.red.bold
+                    | 椅子
+                  |は標準で1脚（2スペース参加の場合は2脚）が参加費に含まれています。
                   br
                   | 1スペースあたり1脚追加できます。
 
                 p.form-note
-                  | やむを得ない理由がある場合、上記の制限を超えて追加が可能です。
+                  | やむを得ない理由がある場合に限り、上記の制限を超えて追加が可能です。
                   br
-                  |「ご連絡事項」へ詳細・追加する数量・追加理由をご記入ください。
+                  | この場合、「ご連絡事項」へ詳細・追加する数量・追加理由をご記入ください。
 
                 .form-group
                   .form-header
@@ -142,8 +148,8 @@
                         option(value="1") 1
                         option(value="2") 2
                 .form-group
-                  .form-group__key ご連絡事項
-                  .form-group__val
+                  .form-group__val.form-textarea
+                    label ご連絡事項
                     textarea.input-textarea(name="body" v-model="contact.body")
                 .form-group
                   .err.center(v-if="error.hasError === true") 入力項目にエラーがあります。
@@ -203,8 +209,8 @@
                 .err(v-if="error.name === true") お名前が入力されていません
                 input.input-text(type="text" name="name" class="c-input-text" v-model="contact.name")
             .form-group
-              .form-group__key お問い合わせ内容
-              .form-group__val
+              .form-group__val.form-textarea
+                label お問い合わせ内容
                 .err(v-if="error.body === true") お問い合わせ内容が入力されていません
                 textarea.input-textarea(name="body" v-model="contact.body")
             .form-group
