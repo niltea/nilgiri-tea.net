@@ -15,6 +15,7 @@ const options = {
     pass: process.env.MAIL_APP_PASS, // パスワード
   },
 };
+const inquiryAddr = 'inquiry@nilgiri-tea.net';
 
 const guessEventName = (eventID) => {
   switch (eventID) {
@@ -42,8 +43,8 @@ const guessCategory = (inquiryCategory) => {
 const createSubject = (payload) => {
   const eventName = guessEventName(payload.event);
   let html = '';
-  html += `<p>イベント：${eventName}</p><p>お名前：${payload.name}</p>`;
   if (!payload.isCircle) {
+    html += `<p>イベント：${eventName}</p><p>お名前：${payload.name}</p>`;
     html += `<p>お問い合わせ内容：<br>${payload.body.replace(/\n/g, '<br>')}</p>`;
     return {
       subject: `${eventName} - 一般参加/その他のお問い合わせ`,
@@ -83,7 +84,7 @@ router.post('/mailer', async (req, res) => {
   const payload = req.body.payload;
   const mail = createSubject(payload);
   const mailData = {
-    from   : 'inquiry@nilgiri-tea.net',
+    from   : inquiryAddr,
     replyTo: payload.mail,
     to     : 'niltea@nilgiri-tea.net',
     subject: mail.subject,
@@ -92,9 +93,12 @@ router.post('/mailer', async (req, res) => {
   };
   try {
     const transport = nodemailer.createTransport(options);
+    // niltea宛に送信
     const sendMeResult = await transport.sendMail(mailData);
+    // 送付先等を変えて控えメール送信
+    mailData.html = '<p>本メールはお問い合わせの控えです。<br>なお、お問い合わせ内容によってはご回答いたしかねる場合があります。</p>' + mailData.html;
     mailData.to = payload.mail;
-    mailData.replyTo = 'inquiry@nilgiri-tea.net';
+    mailData.replyTo = inquiryAddr;
     const sendThemResult = await transport.sendMail(mailData);
     // console.log('+++ Sent +++');
     // console.log(result);
