@@ -31,7 +31,7 @@
           br
           |銀行振込の場合は、メールに記載のフォームより事前連絡を行ってください。
         .procedure-content
-          .form-visual(v-if="eventOptions.image")
+          .form-visual(v-if="eventOptions.image.data")
             img(:src="eventOptions.image.data[0].attributes.url", :alt="eventOptions.name")
           .form-content
             .errorMessage(v-if="errorMessage", v-html="errorMessage" )
