@@ -9,12 +9,12 @@
           br
           |こちらはクレジット決済専用です。
           br
-          |銀行振込の場合は、メールにて振込情報をご請求ください。
+          |銀行振込の場合は、メールに記載のフォームより事前連絡を行ってください。
         .form-group
           .radio-group.form-item.chooseEvent
             template(v-for="event in events")
-              input(:id="`event-${event.event_id}`", type="radio", name="event", :value="event.event_id", v-model="selectEvent")
-              label(:for="`event-${event.event_id}`") {{event.name}}
+              input(:id="`event-${event.eventID}`", type="radio", name="event", :value="event.eventID", v-model="selectEvent")
+              label(:for="`event-${event.eventID}`") {{event.name}}
 
         .form-group
           button.button(@click="chooseEvent", v-if="selectEvent") このイベントの決済へ進む
@@ -29,13 +29,13 @@
         p.headLead
           |こちらはクレジット決済専用です。
           br
-          |銀行振込の場合は、メールに記載の口座へにご送金ください。
+          |銀行振込の場合は、メールに記載のフォームより事前連絡を行ってください。
         .procedure-content
-          .form-visual(v-if="eventOptions.image.url")
-            img(:src="eventOptions.image.url", :alt="eventOptions.name")
+          .form-visual(v-if="eventOptions.image")
+            img(:src="eventOptions.image.data[0].attributes.url", :alt="eventOptions.name")
           .form-content
             .errorMessage(v-if="errorMessage", v-html="errorMessage" )
-            .form-group(v-if="eventOptions.event_id === 'options'")
+            .form-group(v-if="eventOptions.eventID === 'options'")
               p.lead オプション類の追加は各イベント指定のフォームより申請してください。
                 br
                 |準備会にて確認後、支払の指示があるまで本ページでの支払は行わないでください。
@@ -50,7 +50,7 @@
               p.lead 申込時のメールアドレスを入力してください
               input.form-item(name="email", value="", v-model="email")
 
-            .form-group.spaceCount(v-if="eventOptions.event_id !== 'options'")
+            .form-group.spaceCount(v-if="eventOptions.eventID !== 'options'")
               p.lead スペース数を選択してください
               .radio-group.form-item
                 input#space-1(type="radio" name="space", value="1", v-model="spaceCount")
@@ -78,11 +78,11 @@
                 input#chair-0(type="radio" name="chair", value="0", v-model="chairCount")
                 label(for="chair-0") なし
                 input#chair-1(type="radio" name="chair", value="1", v-model="chairCount")
-                label(for="chair-1", v-if="eventOptions.price_chair !== '0'") 1脚
+                label(for="chair-1", v-if="eventOptions.priceChair !== '0'") 1脚
                 input#chair-2(type="radio" name="chair", value="2", v-model="chairCount")
-                label(for="chair-2", v-if="eventOptions.price_chair !== '0'") 2脚
+                label(for="chair-2", v-if="eventOptions.priceChair !== '0'") 2脚
 
-            .form-group.promoCode(v-if="eventOptions.event_id !== 'options'")
+            .form-group.promoCode(v-if="eventOptions.eventID !== 'options'")
               p.lead 優待コードがある場合は入力してください
               input.form-item(name="formPromoCode", value="", v-model="formPromoCode")
             .errorMessage(v-if="errorMessage", v-html="errorMessage" )
@@ -101,10 +101,10 @@
         .form-text
           p.lead 決済金額内訳
           p
-            span(v-if="eventOptions.event_id !== 'options'")
+            span(v-if="eventOptions.eventID !== 'options'")
               |参加費 {{ spaceCount }}スペース: {{ fee.space }}円
             span(v-if="passCount !== '0'")
-              br(v-if="eventOptions.event_id !== 'options'")
+              br(v-if="eventOptions.eventID !== 'options'")
               .errorOnConfirm(v-if="hasPassError") 通行証は1スペースあたり1名分まで追加可能です。<br>通行証追加枚数を{{ passCount }}名分へ修正しました。<br>
               |追加サークル通行証 {{ passCount }}名分: {{ fee.pass }}円
             span(v-if="chairCount !== '0'")
@@ -121,7 +121,7 @@
           button.button.next(@click="checkout") 決済を行う
       .sctl
         a(v-if="eventID",
-          :href="`${eventOptions.url}sctl`",
+          :href="`${eventOptions.URL}sctl`",
           target="_blank") 特定商取引法に基づく表示({{eventOptions.name}})
 </template>
 
@@ -149,24 +149,23 @@ class Item {
     return itemData;
   }
 }
+const paymentID = '1';
+const token = 'ae217d983d262fd4316a672910b9d0db061cd23d0b3af39336bb99ea5a3d951a0a938236b46cd09417c963eda7991fb7998034da549095a4c36f5a1eb656c80a1f6bef064d0c43cd8d2b4f0fe2b40d9f2fab3f855f5e15debbc0a69b6cbf6f4e33be6dea3c6eb555d7c6e81053060ee7f92b302b820922646d087b1807a9c1b1';
+
 export default {
   async asyncData ({ $axios }) {
-    const baseURL = `https://api.cosmicjs.com/v1/${process.env.COSMIC_BUCKET}/object/`;
-    const res = await $axios.get(`${baseURL}${process.env.COSMIC_ID_PAYMENT}`,
-      {
-        params: {
-          read_key: process.env.COSMIC_READ_KEY,
-          props   : 'metadata',
-        },
+    const res = await $axios.get(`https://strapi.nilgiri-tea.net/api/payments/${paymentID}?populate=deep,3`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
       },
-    ).catch((err) => {
+    }).catch((err) => {
       throw new Error(err);
     });
     return {
       events: (() => {
         const returnObj = {};
-        res.data.object.metadata.event.forEach((event) => {
-          returnObj[event.event_id] = event;
+        res.data.data.attributes.event.forEach((event) => {
+          returnObj[event.eventID] = event;
         });
         return returnObj;
       })(),
@@ -207,9 +206,9 @@ export default {
       return setting.map((promo) => {
         return {
           title: promo.title,
-          code : promo.metadata.code,
-          id   : promo.metadata.promotion_id,
-          price: promo.metadata.price,
+          code : promo.code,
+          id   : promo.promotionId,
+          price: promo.price,
         };
       });
     },
@@ -233,9 +232,9 @@ export default {
       };
     },
     fee () {
-      const space = parseInt(this.eventOptions.price_space, 10) * this.spaceCount;
-      const pass = parseInt(this.eventOptions.price_pass, 10) * this.passCount;
-      const chair = parseInt(this.eventOptions.price_chair, 10) * this.chairCount;
+      const space = this.eventOptions.priceSpace * this.spaceCount;
+      const pass = this.eventOptions.pricePass * this.passCount;
+      const chair = this.eventOptions.priceChair * this.chairCount;
       const promo = (this.promoAttached.isValid === true) ? parseInt(this.promoAttached.price, 10) : 0;
       return {
         total: space + pass + chair - promo,
@@ -249,7 +248,7 @@ export default {
   mounted () {
     const query = this.$route.query;
     if (query.space && query.space > '0' && query.space < '3') { this.spaceCount = query.space; }
-    if (query.pass && this.eventOptions.price_pass !== '0' && query.pass > '0' && query.pass < '3') {
+    if (query.pass && this.eventOptions.pricePass !== '0' && query.pass > '0' && query.pass < '3') {
       const passCount = parseInt(query.pass, 10);
       this.passCount = passCount;
       if (this.spaceCount < passCount) {
@@ -257,7 +256,7 @@ export default {
         this.passCount = this.spaceCount;
       }
     }
-    if (query.chair && this.eventOptions.price_chair !== '0' && query.chair > '0' && query.chair < '3') {
+    if (query.chair && this.eventOptions.priceChair !== '0' && query.chair > '0' && query.chair < '3') {
       const chairCount = parseInt(query.chair, 10);
       this.chairCount = chairCount;
       if (this.spaceCount < chairCount) {
@@ -307,7 +306,7 @@ export default {
     async checkout () {
       // 参加費データをitemにいれる
       const items = [];
-      if (this.eventOptions.event_id !== 'options') {
+      if (this.eventOptions.eventID !== 'options') {
         items.push(
           new Item({
             price   : this.eventOptions.price_id_space,
