@@ -9,7 +9,7 @@
           br
           |こちらはクレジット決済専用です。
           br
-          |銀行振込の場合は、メールにて振込情報をご請求ください。
+          |銀行振込の場合は、メールに記載のフォームより事前連絡を行ってください。
         .form-group
           .radio-group.form-item.chooseEvent
             template(v-for="event in events")
@@ -29,7 +29,7 @@
         p.headLead
           |こちらはクレジット決済専用です。
           br
-          |銀行振込の場合は、メールに記載の口座へにご送金ください。
+          |銀行振込の場合は、メールに記載のフォームより事前連絡を行ってください。
         .procedure-content
           .form-visual(v-if="eventOptions.image")
             img(:src="eventOptions.image.data[0].attributes.url", :alt="eventOptions.name")
