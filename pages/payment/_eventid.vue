@@ -309,7 +309,7 @@ export default {
       if (this.eventOptions.eventID !== 'options') {
         items.push(
           new Item({
-            price   : this.eventOptions.price_id_space,
+            price   : this.eventOptions.priceIdSpace,
             quantity: this.spaceCount,
           }),
         );
@@ -319,7 +319,7 @@ export default {
       if (this.passCount !== '0') {
         // item追加
         items.push(new Item({
-          price   : this.eventOptions.price_id_pass,
+          price   : this.eventOptions.priceIdPass,
           quantity: this.passCount,
         }));
       }
@@ -327,7 +327,7 @@ export default {
       if (this.chairCount !== '0') {
         // item追加
         items.push(new Item({
-          price   : this.eventOptions.price_id_chair,
+          price   : this.eventOptions.priceIdChair,
           quantity: this.chairCount,
         }));
       }
