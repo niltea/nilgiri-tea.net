@@ -10,10 +10,12 @@
         br
         p(v-if="contactData.inquiryCategory === 'addOptions'")
           | 続いて、
-          NuxtLink(to="/payment/options/") お支払いページ
+          NuxtLink(to="/payment/options") お支払いページ
           | より、追加料金のお支払いを行ってください。
           br
           | ※1スペースあたり1枚を超える追加の場合、準備会のご連絡をお待ちください。
+          br
+          | お申し込みより2日以内にお支払いがない場合は追加申請が無効となります。
         NuxtLink(to="/") トップへ
 </template>
 

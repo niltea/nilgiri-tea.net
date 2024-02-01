@@ -62,6 +62,7 @@ const createSubject = (payload) => {
       break;
     case 'addOptions':
       html += `<p>通行証追加数：${payload.ticketCount}<br>椅子追加数：${payload.chairCount}</p><p>備考：<br>${payload.body.replace(/\n/g, '<br>')}</p>`;
+      html += '<b>続いて<a href="https://nilgiri-tea.net/payment/options">お支払いページ</a>より、追加料金のお支払いを行ってください。<br>※1スペースあたり1枚を超える追加の場合、準備会のご連絡をお待ちください。<br><b>お申し込みより2日以内にお支払いがない場合は追加申請が無効となります。</b>';
       break;
     case 'reportPayment':
       html += `<p>入金日：${payload.paidDate}<br>入金額：${payload.paidPrice}<br>入金名義：<br>${payload.paidName}</p>`;

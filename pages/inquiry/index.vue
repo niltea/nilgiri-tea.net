@@ -113,6 +113,11 @@
                 .form-header 追加数量の選択
                 p.form-note
                   span.red.bold
+                    | 追加申込が可能か、申請期限（サークル参加案内ページに記載）を確認のうえお申し込みください。
+                    br
+                    | 期間外に申し込まれた場合、手数料を差し引いて返金を行います。
+                p.form-note
+                  span.red.bold
                     | 通行証
                   |は標準で2名分（2スペース参加の場合は4名分）が参加費に含まれています。
                   br
@@ -122,12 +127,18 @@
                     | 椅子
                   |は標準で1脚（2スペース参加の場合は2脚）が参加費に含まれています。
                   br
-                  | 1スペースあたり1脚追加できます。
+                  | 申込後の椅子追加はできません。イベント当日の貸し出しをご利用ください。
 
                 p.form-note
                   | やむを得ない理由がある場合に限り、上記の制限を超えて追加が可能です。
                   br
                   | この場合、「ご連絡事項」へ詳細・追加する数量・追加理由をご記入ください。
+
+                p.form-note
+                  span.red.bold
+                    | お申し込み後2日以内のお支払い（クレジットカードのみ利用可）が必要です。
+                  br
+                  | お支払いがない場合は追加申込は無効となります。
 
                 .form-group
                   .form-header
@@ -145,8 +156,6 @@
                     label
                       select.select(name="chairCount", v-model="contact.chairCount")
                         option(value="0", selected="selected") 0
-                        option(value="1") 1
-                        option(value="2") 2
                 .form-group
                   .form-group__val.form-textarea
                     label ご連絡事項
@@ -161,7 +170,7 @@
                 p.form-note
                   | スムーズにお支払いを確認するため、お支払い情報をご記載ください。
                   br
-                  span.red.bold 必ず、銀行振込完了後ににご連絡をお願いします。
+                  span.red.bold 必ず、銀行振込完了後にご連絡をお願いします。
                   br
                   span.bold ※銀行振込利用申請は「その他のご連絡・お問い合わせ」より行ってください
                 p.form-note
