@@ -113,56 +113,11 @@
                 .form-header 追加数量の選択
                 p.form-note
                   span.red.bold
-                    | 追加申込が可能か、申請期限（サークル参加案内ページに記載）を確認のうえお申し込みください。
-                    br
-                    | 期間外に申し込まれた場合、手数料を差し引いて返金を行います。
+                    | 現在、サークル通行証または椅子の追加は行えません。
                 p.form-note
-                  span.red.bold
-                    | 通行証
-                  |は標準で2名分（2スペース参加の場合は4名分）が参加費に含まれています。
+                  | ただし頒布上やむを得ない理由がある場合に限り受け付ける場合があります。
                   br
-                  | 頒布上必要な場合に限り、1スペースあたり1名分追加できます。
-                p.form-note
-                  span.red.bold
-                    | 椅子
-                  |は標準で1脚（2スペース参加の場合は2脚）が参加費に含まれています。
-                  br
-                  | 申込後の椅子追加はできません。イベント当日の貸し出しをご利用ください。
-
-                p.form-note
-                  | やむを得ない理由がある場合に限り、上記の制限を超えて追加が可能です。
-                  br
-                  | この場合、「ご連絡事項」へ詳細・追加する数量・追加理由をご記入ください。
-
-                p.form-note
-                  span.red.bold
-                    | お申し込み後2日以内のお支払い（クレジットカードのみ利用可）が必要です。
-                  br
-                  | お支払いがない場合は追加申込は無効となります。
-
-                .form-group
-                  .form-header
-                    | 通行証の追加数
-                  .form-value.input-select
-                    label
-                      select.select(name="ticketCount", v-model="contact.ticketCount")
-                        option(value="0") 0
-                        option(value="1") 1
-                        option(value="2") 2
-                .form-group
-                  .form-header
-                    | 椅子の追加数
-                  .form-value.input-select
-                    label
-                      select.select(name="chairCount", v-model="contact.chairCount")
-                        option(value="0", selected="selected") 0
-                .form-group
-                  .form-group__val.form-textarea
-                    label ご連絡事項
-                    textarea.input-textarea(name="body" v-model="contact.body")
-                .form-group
-                  .err.center(v-if="error.hasError === true") 入力項目にエラーがあります。
-                  button.button-submit(type="submit") 確認
+                  | この場合、「その他のご連絡・お問い合わせ」よりお問い合わせください。
 
               // 参加費の銀行振込完了連絡
               .form-section(v-if="contact.inquiryCategory === 'reportPayment'")
