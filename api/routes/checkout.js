@@ -15,6 +15,9 @@ router.post('/checkout', async (req, res) => {
       metadata,
     },
     discounts,
+    automatic_tax: {
+      enabled: true,
+    },
     mode       : 'payment',
     success_url: 'https://nilgiri-tea.net/payment/success',
     cancel_url : 'https://nilgiri-tea.net/payment',
@@ -27,7 +30,7 @@ router.post('/checkout', async (req, res) => {
 });
 // get
 router.get('/checkout', async (req, res) => {
-  res.json({ id: '', text: 'checkout: can\'t get this api' });
+  await res.json({ id: '', text: 'checkout: can\'t get this api' });
 });
 
 module.exports = router;
