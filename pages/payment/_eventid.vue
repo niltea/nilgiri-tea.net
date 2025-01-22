@@ -36,10 +36,9 @@
           .form-content
             .errorMessage(v-if="errorMessage", v-html="errorMessage" )
             .form-group(v-if="eventOptions.eventID === 'options'")
-              p.lead 各イベント指定のフォームより申請を行ってから、支払を行ってください。
+              p.lead
+                |各イベント指定の問い合わせフォームより申請を行ってから、支払を行ってください。
                 br
-                | 申請した追加数
-              p.lead 各イベント指定のフォームより申請を行ってから、支払を行ってください。
                 |追加可能数には制限があります。
                 br
                 |制限を超えて追加申請を行う場合、指示があるまで本ページでの支払は行わないでください。
