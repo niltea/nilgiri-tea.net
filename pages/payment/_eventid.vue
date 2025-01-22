@@ -394,6 +394,11 @@ export default {
           throw new Error(err);
         });
       const session = await response.data;
+      if (session.error) {
+        // エラー処理
+        this.errorMessage = session.error.raw.message;
+        return;
+      }
       const result = await stripe.redirectToCheckout({
         sessionId: session.id,
       });

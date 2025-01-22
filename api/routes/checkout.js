@@ -8,6 +8,9 @@ router.post('/checkout', async (req, res) => {
   const lineItems = JSON.parse(req.body.items);
   const metadata = JSON.parse(req.body.metadata);
   const discounts = JSON.parse(req.body.discounts);
+  const customer = await stripe.customers.create({
+    email: metadata.email ? metadata.email : null,
+  });
   const sessionParams = {
     // payment_method_types: ['card'],
     line_items         : lineItems,
@@ -15,6 +18,10 @@ router.post('/checkout', async (req, res) => {
       metadata,
     },
     discounts,
+    customer: customer.id,
+    customer_update: {
+      address: 'auto',
+    },
     automatic_tax: {
       enabled: true,
     },
@@ -22,15 +29,22 @@ router.post('/checkout', async (req, res) => {
     success_url: 'https://nilgiri-tea.net/payment/success',
     cancel_url : req.body.cancelUrl,
   };
-  if (metadata.email) {
-    sessionParams.customer_email = metadata.email;
+  try {
+    const session = await stripe.checkout.sessions.create(sessionParams);
+    res.json({
+      id: session.id,
+      error: null,
+    });
+  } catch (e) {
+    res.json({
+      id: null,
+      error: e,
+    })
   }
-  const session = await stripe.checkout.sessions.create(sessionParams);
-  res.json({ id: session.id });
 });
 // get
-router.get('/checkout', async (req, res) => {
-  await res.json({ id: '', text: 'checkout: can\'t get this api' });
+router.get('/checkout', (req, res) => {
+  res.json({ id: '', text: 'checkout: this api can\'t be get.' });
 });
 
 module.exports = router;
