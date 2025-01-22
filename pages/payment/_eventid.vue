@@ -201,7 +201,36 @@ export default {
       return this.selectedEvent;
     },
     eventOptions () {
-      return this.events[this.eventID];
+      if (!this.isTest) {
+        return this.events[this.eventID];
+      }
+      // テスト環境用：デバッグデータ
+      return {
+        id: 3,
+        eventID: 'debug',
+        name: 'デバッグイベント',
+        url: 'https://nilgiri-tea.net/',
+        priceIdSpace: 'price_1Qjxn8H1HQvEK2BUnQEPNDyw',
+        priceSpace: 5000,
+        priceIdPass: 'price_1QjxneH1HQvEK2BUG5Pf8qvC',
+        pricePass: 1000,
+        priceIdChair:'price_1QjxoBH1HQvEK2BUr1BrDV8o',
+        priceChair: 500,
+        image: { data: [ {
+          attributes: {
+            url: 'https://image-distribution.nilgiri-tea.net/holo6visual_3ee49ef1cf.jpg'
+          }
+        } ] },
+        promo: [
+          {
+            id: 5,
+            name: 'テスト割引',
+            code: 'HOLO9EARLYBIRD',
+            promotionId: 'TnTAOzCt',
+            price: 500
+          },
+        ]
+      };
     },
     promoCodes () {
       if (!this.eventOptions.promo) {
