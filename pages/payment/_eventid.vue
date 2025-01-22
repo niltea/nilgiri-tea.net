@@ -216,11 +216,13 @@ export default {
         pricePass: 1000,
         priceIdChair:'price_1QjxoBH1HQvEK2BUr1BrDV8o',
         priceChair: 500,
-        image: { data: [ {
-          attributes: {
-            url: 'https://image-distribution.nilgiri-tea.net/holo6visual_3ee49ef1cf.jpg'
-          }
-        } ] },
+        image: {
+          data: [{
+            attributes: {
+              url: 'https://image-distribution.nilgiri-tea.net/holo6visual_3ee49ef1cf.jpg'
+            }
+          }]
+        },
         promo: [
           {
             id: 5,
@@ -350,7 +352,7 @@ export default {
       }
       const discounts = [];
       // 通行証
-      if (this.eventOptions.priceIdPass && this.passCount !== '0') {
+      if (this.eventOptions.priceIdPass && this.passCount !== 0) {
         // item追加
         items.push(new Item({
           price   : this.eventOptions.priceIdPass,
@@ -358,7 +360,7 @@ export default {
         }));
       }
       // 追加椅子
-      if (this.eventOptions.priceIdChair && this.chairCount !== '0') {
+      if (this.eventOptions.priceIdChair && this.chairCount !== 0) {
         // item追加
         items.push(new Item({
           price   : this.eventOptions.priceIdChair,
@@ -397,6 +399,7 @@ export default {
       if (session.error) {
         // エラー処理
         this.errorMessage = session.error.raw.message;
+        console.log(session.error.raw.message)
         return;
       }
       const result = await stripe.redirectToCheckout({
