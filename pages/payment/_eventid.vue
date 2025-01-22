@@ -348,7 +348,7 @@ export default {
         event     : this.eventOptions.name,
         circleName: this.circleName,
         circleID  : this.circleID,
-        email     : this.email,
+        email     : this.email.replace(/\s/g, ''),
       };
 
       const stripe = await stripePromise;
