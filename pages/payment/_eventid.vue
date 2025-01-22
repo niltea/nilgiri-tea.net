@@ -182,14 +182,15 @@ export default {
       circleName   : '',
       circleID     : '',
       email        : '',
-      spaceCount   : '1',
-      passCount    : '0',
-      chairCount   : '0',
+      spaceCount   : 1,
+      passCount    : 0,
+      chairCount   : 0,
       formPromoCode: '',
       confirmed    : false,
       hasError     : false,
       hasPassError : false,
       hasChairError: false,
+      isTest       : process.env.IS_TEST || false,
     };
   },
   computed: {
@@ -251,9 +252,9 @@ export default {
   },
   mounted () {
     const query = this.$route.query;
-    if (query.space && query.space > '0' && query.space < '3') { this.spaceCount = query.space; }
+    if (query.space && query.space > '0' && query.space < '3') { this.spaceCount = Number(query.space); }
     if (query.pass && this.eventOptions.pricePass !== '0' && query.pass > '0' && query.pass < '3') {
-      const passCount = parseInt(query.pass, 10);
+      const passCount = Number(query.pass);
       this.passCount = passCount;
       if (this.spaceCount < passCount) {
         this.hasPassError = true;
@@ -261,7 +262,7 @@ export default {
       }
     }
     if (query.chair && this.eventOptions.priceChair !== '0' && query.chair > '0' && query.chair < '3') {
-      const chairCount = parseInt(query.chair, 10);
+      const chairCount = Number(query.chair);
       this.chairCount = chairCount;
       if (this.spaceCount < chairCount) {
         this.hasChairError = true;
