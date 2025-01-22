@@ -107,11 +107,11 @@
           p
             span(v-if="eventOptions.eventID !== 'options'")
               |参加費 {{ spaceCount }}スペース: {{ fee.space }}円
-            span(v-if="passCount !== '0'")
+            span(v-if="eventOptions.priceIdPass && passCount !== '0'")
               br(v-if="eventOptions.eventID !== 'options'")
               .errorOnConfirm(v-if="hasPassError") 通行証は1スペースあたり1名分まで追加可能です。<br>通行証追加枚数を{{ passCount }}名分へ修正しました。<br>
               |追加サークル通行証 {{ passCount }}名分: {{ fee.pass }}円
-            span(v-if="chairCount !== '0'")
+            span(v-if="eventOptions.priceIdChair && chairCount !== '0'")
               br
               .errorOnConfirm(v-if="hasChairError") 追加椅子は1スペースあたり1脚まで追加可能です。<br>追加椅子を{{ chairCount }}脚へ修正しました。<br>
               |追加椅子 {{ chairCount }}脚: {{ fee.chair }}円
@@ -320,7 +320,7 @@ export default {
       }
       const discounts = [];
       // 通行証
-      if (this.passCount !== '0') {
+      if (this.eventOptions.priceIdPass && this.passCount !== '0') {
         // item追加
         items.push(new Item({
           price   : this.eventOptions.priceIdPass,
@@ -328,7 +328,7 @@ export default {
         }));
       }
       // 追加椅子
-      if (this.chairCount !== '0') {
+      if (this.eventOptions.priceIdChair && this.chairCount !== '0') {
         // item追加
         items.push(new Item({
           price   : this.eventOptions.priceIdChair,
