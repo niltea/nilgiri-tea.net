@@ -388,6 +388,7 @@ export default {
           items    : JSON.stringify(items),
           metadata : JSON.stringify(metadata),
           discounts: JSON.stringify(discounts),
+          cancelUrl: location.href
         })
         .catch((err) => {
           throw new Error(err);
