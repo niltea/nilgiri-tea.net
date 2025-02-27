@@ -7,9 +7,7 @@
         h3 サークル参加費決済手続き
         p.headLead 決済を行うイベントを選択してください
           br
-          |こちらはクレジット決済専用です。
-          br
-          |銀行振込の場合は、メールに記載のフォームより事前連絡を行ってください。
+          |クレジット決済・銀行振込がご利用いただけます。
         .form-group
           .radio-group.form-item.chooseEvent
             template(v-for="event in events")
@@ -27,9 +25,7 @@
           br
           |修正が必要な場合、準備会までお問い合わせください。
         p.headLead
-          |こちらはクレジット決済専用です。
-          br
-          |銀行振込の場合は、メールに記載のフォームより事前連絡を行ってください。
+          |クレジット決済・銀行振込がご利用いただけます。
         .procedure-content
           .form-visual(v-if="eventOptions.image.data")
             img(:src="eventOptions.image.data[0].attributes.url", :alt="eventOptions.name")
