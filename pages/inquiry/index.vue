@@ -4,7 +4,9 @@
     .section.section-link
       .contactWrapper
         h2 Nilgiri Tea 主催イベントへのお問い合わせ
-        p 本フォームによるお問い合わせについては、一定期間内のご回答をお約束すること、<br>また、ご回答そのもののお約束をするものではありません。
+        p 本フォームによるお問い合わせについては、ご回答そのもののお約束をするものではありません。
+          br
+          |また、一定期間内のご回答をお約束することもできかねますので、あらかじめご了承ください。
         form(v-on:submit.prevent="submit")
           .form-section
             .form-group
@@ -38,7 +40,7 @@
           .form-section(v-if="contact.event === 'vggc' || contact.event === 'holokle'")
             .form-group
               .form-header サークル参加・一般参加のいずれかを選択してください。
-              p.form-note サークル参加者の方は「サークル参加」を選択してください。<br>正しく選択されない場合、ご対応が遅れる場合があります。<br>スムーズなご対応のためご協力をお願いいたします。
+              p.form-note サークル参加者（申込予定含む）の方は「サークル参加」を選択してください。<br>正しく選択されない場合、ご対応が遅れる場合があります。<br>スムーズなご対応のためご協力をお願いいたします。
               .form-value.form-radio
                 label(for="isCircle-true")
                   input.input-radio#isCircle-true(
@@ -85,9 +87,6 @@
                     input(value="addOptions", type="radio", name="type", v-model="contact.inquiryCategory")
                     | サークル通行証または椅子の追加
                   label
-                    input(value="reportPayment", type="radio", name="type", v-model="contact.inquiryCategory")
-                    | 参加費の銀行振込完了連絡
-                  label
                     input(value="others", type="radio", name="type", v-model="contact.inquiryCategory")
                     | その他のご連絡・お問い合わせ
 
@@ -108,44 +107,31 @@
                   .err.center(v-if="error.hasError === true") 入力項目にエラーがあります。
                   button.button-submit(type="submit") 確認
 
-              // サークル通行証または椅子の追加
+              // サークル通行証の追加
               .form-section(v-if="contact.inquiryCategory === 'addOptions'")
                 .form-header 追加数量の選択
                 p.form-note
-                  span.red.bold
-                    | 現在、サークル通行証または椅子の追加は行えません。
+                  | 椅子の追加は当日のみの受け付けとなります。
                 p.form-note
+                  span.red.bold
+                    | 参加費お支払い後の変更はできません。
+                  br
                   | ただし頒布上やむを得ない理由がある場合に限り受け付ける場合があります。
                   br
-                  | この場合、「その他のご連絡・お問い合わせ」よりお問い合わせください。
-
-              // 参加費の銀行振込完了連絡
-              .form-section(v-if="contact.inquiryCategory === 'reportPayment'")
-                .form-header お支払い情報
-                p.form-note
-                  | スムーズにお支払いを確認するため、お支払い情報をご記載ください。
-                  br
-                  span.red.bold 必ず、銀行振込完了後にご連絡をお願いします。
-                  br
-                  span.bold ※銀行振込利用申請は「その他のご連絡・お問い合わせ」より行ってください
-                p.form-note
-                  | 既に準備会より入金確認のご連絡を行っている場合、本フォームでの報告は不要です。
-                  br
-                  | クレジットカード決済の場合も自動で必要事項を取得していますのでご連絡不要です。
+                  | この場合、かならず理由を明記したうえでお問い合わせください。
                 .form-group
-                  .form-group__val.form-input
-                    label お支払い日
-                    .err(v-if="error.paidDate === true") 本日より先の日付は入力できません。
-                    input.input-text(type="date" name="paidDate" v-model="contact.paidDate")
+                  .form-header
+                    | 通行証の追加数
+                  .form-value.input-select
+                    label
+                      select.select(name="ticketCount", v-model="contact.ticketCount")
+                        option(value="0") 0
+                        option(value="1") 1
+                        option(value="2") 2
                 .form-group
-                  .form-group__val.form-input
-                    label お支払い金額
-                    .err(v-if="error.paidPrice === true") 金額の入力にエラーがあります。
-                    input.input-text(type="number" name="paidPrice" v-model="contact.paidPrice")
-                .form-group
-                  .form-group__val.form-input
-                    label お支払い名義（カタカナで入力）<br>※サークル名でお振り込みされた場合は記入不要
-                    input.input-text(type="text" name="paidName" v-model="contact.paidName")
+                  .form-group__val.form-textarea
+                    label ご連絡事項
+                    textarea.input-textarea(name="body" v-model="contact.body")
                 .form-group
                   .err.center(v-if="error.hasError === true") 入力項目にエラーがあります。
                   button.button-submit(type="submit") 確認
@@ -253,19 +239,10 @@ export default {
         // サークル
         this.error.body = false;
         this.error.circleName = (this.contact.circleName === '');
-        if (!(this.contact.inquiryCategory === 'addOptions' || this.contact.inquiryCategory === 'reportPayment')) {
+        if (!(this.contact.inquiryCategory === 'addOptions')) {
           this.error.body = (this.contact.body === '');
         }
         this.error.hasError = (this.error.hasError || this.error.body || this.error.circleName);
-        if (this.contact.inquiryCategory === 'reportPayment') {
-          // 支払連絡
-          // お支払い日
-          this.error.paidDate = (new Date(this.contact.paidDate) > new Date());
-
-          // お支払い金額
-          this.error.paidPrice = (parseInt(this.contact.paidPrice, 10) < 1000);
-          this.error.hasError = (this.error.hasError || this.error.paidDate || this.error.paidPrice);
-        }
       }
       this.error.hasError = (this.error.hasError || this.error.body || this.error.circleName);
     },

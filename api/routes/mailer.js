@@ -10,9 +10,9 @@ const options = {
   tls       : {
     rejectUnauthorized: false,
   },
-  auth: { // 認証情報
-    user: process.env.MAIL_USERNAME, // ユーザー名
-    pass: process.env.MAIL_APP_PASS, // パスワード
+  auth: {
+    type: 'OAuth2',
+    user: 'info@flpc.info',
   },
 };
 const inquiryAddr = 'inquiry@nilgiri-tea.net';

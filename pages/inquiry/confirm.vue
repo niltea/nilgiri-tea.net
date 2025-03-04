@@ -33,23 +33,11 @@
                 .confirm-key 椅子の追加数
                 .confirm-value {{contactData.chairCount}}脚
 
-            //- 振込連絡
-            .confirm-section(v-if="contactData.inquiryCategory === 'reportPayment'")
-              //- h3 お振り込み内容
-              .confirm-group
-                .confirm-key お支払い日
-                .confirm-value {{contactData.paidDate}}
-              .confirm-group
-                .confirm-key お支払い金額
-                .confirm-value {{contactData.paidPrice}}円
-              .confirm-group
-                .confirm-key お支払い名義
-                .confirm-value {{contactData.paidName}}
           .confirm-group(v-if="contactData.inquiryCategory !== 'reportPayment'")
             .confirm-key(v-if="contactData.inquiryCategory === 'correction'") 修正内容
             .confirm-key(v-else-if="contactData.inquiryCategory === 'addOptions'") ご連絡事項
             .confirm-key(v-else) お問い合わせ内容
-            .confirm-group__val {{contactData.body}}
+            .confirm-group__val(v-html="replaceBR(contactData.body)")
           .button-wrapper
             button.button-submit(disabled="disabled", :class="{isProgress}"): NuxtLink.button-inner(to="/inquiry/") 修正
             button.button-submit(type="submit", :disabled="isProgress", :class="{isProgress}"): span.button-inner 送信
@@ -82,8 +70,6 @@ export default {
           return 'サークル参加申込内容の修正・変更';
         case 'addOptions':
           return 'サークル通行証または椅子の追加';
-        case 'reportPayment':
-          return '参加費ご入金連絡（銀行振込）';
         default:
           return 'その他のご連絡・お問い合わせ';
       }
@@ -95,32 +81,29 @@ export default {
     }
   },
   methods: {
+    replaceBR (text) {
+      return text.replace(/\n/g, '<br>');
+    },
     async submit () {
-      const payload = {
-        event          : this.contactData.event,
-        isCircle       : this.contactData.isCircle,
-        inquiryCategory: this.contactData.inquiryCategory,
-        ticketCount    : this.contactData.ticketCount,
-        chairCount     : this.contactData.chairCount,
-        paidDate       : this.contactData.paidDate,
-        paidPrice      : this.contactData.paidPrice,
-        paidName       : this.contactData.paidName,
-        name           : this.contactData.name,
-        circleName     : this.contactData.circleName,
-        mail           : this.contactData.mail,
-        body           : this.contactData.body,
-      };
       this.isProgress = true;
-
+      console.log(this.replaceBR(this.contactData.body))
       const response = await this.$axios.post(
-        `${window.location.origin}/api/mailer`,
+        'https://usebasin.com/f/4993e557a6b6',
         {
-          payload,
+          event          : this.contactData.event,
+          isCircle       : this.contactData.isCircle,
+          inquiryCategory: this.inquiryCategory,
+          ticketCount    : this.contactData.ticketCount,
+          chairCount     : this.contactData.chairCount,
+          paidName       : this.contactData.paidName,
+          name           : this.contactData.name,
+          circleName     : this.contactData.circleName,
+          email          : this.contactData.mail,
+          body           : this.replaceBR(this.contactData.body),
         })
         .catch((err) => {
           throw new Error(err);
         });
-      console.log(response);
       if (response.data.error === true) {
         this.errorMessage = response.text;
         console.log('err');
