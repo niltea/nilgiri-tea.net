@@ -10,7 +10,7 @@
           |クレジット決済・銀行振込がご利用いただけます。
         .form-group
           .radio-group.form-item.chooseEvent
-            template(v-for="event in events")
+            template(v-for="event in events", v-if="isTest || !/TEST/.test(event.payment)")
               input(:id="`event-${event.eventID}`", type="radio", name="event", :value="event.eventID", v-model="selectEvent")
               label(:for="`event-${event.eventID}`") {{event.name}}
 
@@ -115,7 +115,9 @@
               |コード割引 -{{ this.promoAttached.price }}円
         .form-text
           p.lead 準備会より指示があった場合を除き、<br>「内容を修正する」から椅子・通行証の追加数変更は行わないでください。
-        .form-group
+
+        .errorMessage(v-if="errorMessage", v-html="errorMessage" )
+        .form-group(:class="{isProgress}")
           button.button.prev(@click="cancelPayment") 内容を修正する
           button.button.next(@click="checkout") 決済を行う
       .sctl
@@ -125,9 +127,6 @@
 </template>
 
 <script>
-import { loadStripe } from '@stripe/stripe-js';
-const stripePromise = loadStripe(process.env.STRIPE_KEY);
-
 class Item {
   constructor (options) {
     const itemData = {
@@ -172,6 +171,7 @@ export default {
   },
   data () {
     return {
+      isProgress   : false,
       errorMessage : '',
       selectEvent  : '',
       circleName   : '',
@@ -196,38 +196,7 @@ export default {
       return this.selectedEvent;
     },
     eventOptions () {
-      if (!this.isTest) {
-        return this.events[this.eventID];
-      }
-      // テスト環境用：デバッグデータ
-      return {
-        id: 3,
-        eventID: 'debug',
-        name: 'デバッグイベント',
-        url: 'https://nilgiri-tea.net/',
-        priceIdSpace: 'price_1Qjxn8H1HQvEK2BUnQEPNDyw',
-        priceSpace: 5000,
-        priceIdPass: 'price_1QjxneH1HQvEK2BUG5Pf8qvC',
-        pricePass: 1000,
-        priceIdChair:'price_1QjxoBH1HQvEK2BUr1BrDV8o',
-        priceChair: 500,
-        image: {
-          data: [{
-            attributes: {
-              url: 'https://image-distribution.nilgiri-tea.net/holo6visual_3ee49ef1cf.jpg'
-            }
-          }]
-        },
-        promo: [
-          {
-            id: 5,
-            name: 'テスト割引',
-            code: 'HOLO9EARLYBIRD',
-            promotionId: 'TnTAOzCt',
-            price: 500
-          },
-        ]
-      };
+      return this.events[this.eventID];
     },
     promoCodes () {
       if (!this.eventOptions.promo) {
@@ -278,7 +247,8 @@ export default {
   },
   mounted () {
     const query = this.$route.query;
-    if (query.space && query.space > '0' && query.space < '3') { this.spaceCount = Number(query.space); }
+    this.selectEvent = this.$nuxt.$route.params.eventid;
+    if (query.space && query.space > '0' && query.space < '3') { this.spaceCount = Number(query.space); } else { this.spaceCount = 1; }
     if (query.pass && this.eventOptions.pricePass !== '0' && query.pass > '0' && query.pass < '3') {
       const passCount = Number(query.pass);
       this.passCount = passCount;
@@ -329,6 +299,10 @@ export default {
         this.confirmed = true;
         this.hasPassError = false;
         this.hasChairError = false;
+
+        this.$router.push({
+          path: `/payment/${this.selectEvent}?space=${this.spaceCount}&name=${this.circleName}&id=${this.circleID}&email=${this.email}&pass=${this.passCount}&confirmed=true`,
+        });
       }
     },
     cancelPayment () {
@@ -336,9 +310,9 @@ export default {
     },
     async checkout () {
       // 参加費データをitemにいれる
-      const items = [];
+      const lineItems = [];
       if (this.eventOptions.eventID !== 'options') {
-        items.push(
+        lineItems.push(
           new Item({
             price   : this.eventOptions.priceIdSpace,
             quantity: this.spaceCount,
@@ -349,7 +323,7 @@ export default {
       // 通行証
       if (this.eventOptions.priceIdPass && this.passCount !== 0) {
         // item追加
-        items.push(new Item({
+        lineItems.push(new Item({
           price   : this.eventOptions.priceIdPass,
           quantity: this.passCount,
         }));
@@ -357,7 +331,7 @@ export default {
       // 追加椅子
       if (this.eventOptions.priceIdChair && this.chairCount !== 0) {
         // item追加
-        items.push(new Item({
+        lineItems.push(new Item({
           price   : this.eventOptions.priceIdChair,
           quantity: this.chairCount,
         }));
@@ -377,31 +351,37 @@ export default {
         circleID  : this.circleID,
         email     : this.email.replace(/\s/g, ''),
       };
+      this.isProgress = true;
 
-      const stripe = await stripePromise;
-      const response = await this.$axios.post(
-        `${window.location.origin}/api/checkout`,
-        {
-          items    : JSON.stringify(items),
-          metadata : JSON.stringify(metadata),
-          discounts: JSON.stringify(discounts),
-          cancelUrl: location.href
-        })
-        .catch((err) => {
-          throw new Error(err);
-        });
-      const session = await response.data;
-      if (session.error) {
+      // 決済にすすむ
+      try {
+        const response = await this.$axios.post(
+          'https://ekirhxpvz3nltvyyebljnhk4gm0gznch.lambda-url.ap-northeast-1.on.aws/',
+          {
+            lineItems,
+            metadata,
+            discounts,
+            cancelUrl  : location.href,
+            successUrl: `${location.origin}/payment/success`,
+            payment: this.eventOptions.payment,
+            suffix: {
+              en: this.eventOptions.suffix_en,
+              kanji: this.eventOptions.suffix_kanji,
+              kana: this.eventOptions.suffix_kana,
+            }
+          }
+        );
+        const session = response.data;
+        if (!session.error) {
+          location.href = session.url;
+        }
+      } catch (err) {
         // エラー処理
-        this.errorMessage = session.error.raw.message;
-        console.log(session.error.raw.message)
-        return;
-      }
-      const result = await stripe.redirectToCheckout({
-        sessionId: session.id,
-      });
-      if (result.error) {
-        this.errorMessage = result.error.message;
+        const session = err.response.data;
+        this.errorMessage = session.error;
+        console.log(session.error)
+      } finally {
+        this.isProgress = false;
       }
     },
   },
@@ -562,6 +542,11 @@ button {
   }
   &.next {
     background: $black;
+  }
+  .isProgress & {
+    opacity: 0.5;
+    user-select: none;
+    pointer-events: none;
   }
 }
 .radio-group {
