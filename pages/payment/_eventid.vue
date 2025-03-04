@@ -246,6 +246,7 @@ export default {
     },
   },
   mounted () {
+    console.log('0304')
     const query = this.$route.query;
     this.selectEvent = this.$nuxt.$route.params.eventid;
     if (query.space && query.space > '0' && query.space < '3') { this.spaceCount = Number(query.space); } else { this.spaceCount = 1; }
