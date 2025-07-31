@@ -112,7 +112,7 @@
               |追加椅子 {{ chairCount }}脚: {{ fee.chair }}円
             span(v-if="promoAttached.isValid === true")
               br
-              |コード割引 -{{ this.promoAttached.price }}円
+              |{{ this.promoAttached.name }}: -{{ this.promoAttached.price }}円
         .form-text
           p.lead 準備会より指示があった場合を除き、<br>「内容を修正する」から椅子・通行証の追加数変更は行わないでください。
 
@@ -205,10 +205,12 @@ export default {
       const setting = this.eventOptions.promo;
       return setting.map((promo) => {
         return {
-          title: promo.title,
+          name: promo.name,
           code : promo.code,
           id   : promo.promotionId,
           price: promo.price,
+          expire: promo.expire,
+          IS_ENABLED: promo.IS_ENABLED,
         };
       });
     },
@@ -219,13 +221,14 @@ export default {
         };
       }
       const foundPromo = this.promoCodes.find(candidate => candidate.code === this.formPromoCode);
-      if (!foundPromo) {
+      console.log(foundPromo)
+      if (!foundPromo || new Date(foundPromo.expire) < new Date()) {
         return {
           isValid: false,
         };
       }
       return {
-        title  : foundPromo.title,
+        name   : foundPromo.name,
         price  : foundPromo.price,
         priceID: foundPromo.id,
         isValid: true,
@@ -246,7 +249,7 @@ export default {
     },
   },
   mounted () {
-    console.log('0304')
+    console.log('0731')
     const query = this.$route.query;
     this.selectEvent = this.$nuxt.$route.params.eventid;
     if (query.space && query.space > '0' && query.space < '3') { this.spaceCount = Number(query.space); } else { this.spaceCount = 1; }
@@ -357,6 +360,7 @@ export default {
       // 決済にすすむ
       try {
         const response = await this.$axios.post(
+          // 'http://172.22.2.37:3000/api/checkout',
           'https://ekirhxpvz3nltvyyebljnhk4gm0gznch.lambda-url.ap-northeast-1.on.aws/',
           {
             lineItems,
