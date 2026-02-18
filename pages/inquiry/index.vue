@@ -254,7 +254,7 @@ export default {
       // storeに保存
       this.$store.dispatch('inquiry/setFormData', this.contact);
       // 確認画面に遷移
-      this.$router.push('/inquiry/confirm/');
+      this.$router.push('/inquiry/confirm');
     },
   },
 };

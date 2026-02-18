@@ -40,7 +40,7 @@ export default {
   },
   created () {
     if (!this.contactData.isOK) {
-      this.$nuxt.context.redirect('/inquiry/');
+      this.$nuxt.context.redirect('/inquiry');
     }
   },
   methods: {
@@ -48,7 +48,7 @@ export default {
       // 送信後、storeに保存していたデータを破棄
       this.$store.dispatch('inquiry/removeAction');
       // 確認画面に遷移
-      this.$router.push('/inquiry/complete/');
+      this.$router.push('/inquiry/complete');
     },
   },
 };

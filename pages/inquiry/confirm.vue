@@ -39,7 +39,7 @@
             .confirm-key(v-else) お問い合わせ内容
             .confirm-group__val(v-html="replaceBR(contactData.body)")
           .button-wrapper
-            button.button-submit(disabled="disabled", :class="{isProgress}"): NuxtLink.button-inner(to="/inquiry/") 修正
+            button.button-submit(disabled="disabled", :class="{isProgress}"): NuxtLink.button-inner(to="/inquiry") 修正
             button.button-submit(type="submit", :disabled="isProgress", :class="{isProgress}"): span.button-inner 送信
           .err.center(v-if="errorMessage") {{errorMessage}}
 </template>
@@ -109,8 +109,8 @@ export default {
             body  : params,
           },
         );
-        // this.$store.dispatch('inquiry/removeAction');
-        this.$router.push('/inquiry/complete/');
+        this.$store.dispatch('inquiry/removeAction');
+        this.$router.push('/inquiry/complete');
       } catch (_err) {
         this.errorMessage = '送信に失敗しました。時間をおいて再度お試しください。';
       } finally {
