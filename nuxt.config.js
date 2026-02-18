@@ -1,5 +1,5 @@
 export default {
-  telemetry: true,
+  telemetry: false,
   // Target (https://go.nuxtjs.dev/config-target)
   target   : 'static',
   // Global page headers: https://go.nuxtjs.dev/config-head
@@ -60,7 +60,8 @@ export default {
 
   // Axios module configuration: https://go.nuxtjs.dev/config-axios
   axios: {
-    responseType: 'json',
+    responseType  : 'json',
+    browserBaseURL: '/',
   },
 
   // Content module configuration: https://go.nuxtjs.dev/config-content

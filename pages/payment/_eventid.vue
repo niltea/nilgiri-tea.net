@@ -205,11 +205,11 @@ export default {
       const setting = this.eventOptions.promo;
       return setting.map((promo) => {
         return {
-          name: promo.name,
-          code : promo.code,
-          id   : promo.promotionId,
-          price: promo.price,
-          expire: promo.expire,
+          name      : promo.name,
+          code      : promo.code,
+          id        : promo.promotionId,
+          price     : promo.price,
+          expire    : promo.expire,
           IS_ENABLED: promo.IS_ENABLED,
         };
       });
@@ -221,7 +221,7 @@ export default {
         };
       }
       const foundPromo = this.promoCodes.find(candidate => candidate.code === this.formPromoCode);
-      console.log(foundPromo)
+      console.log(foundPromo);
       if (!foundPromo || new Date(foundPromo.expire) < new Date()) {
         return {
           isValid: false,
@@ -249,7 +249,7 @@ export default {
     },
   },
   mounted () {
-    console.log('0731')
+    console.log('0731');
     const query = this.$route.query;
     this.selectEvent = this.$nuxt.$route.params.eventid;
     if (query.space && query.space > '0' && query.space < '3') { this.spaceCount = Number(query.space); } else { this.spaceCount = 1; }
@@ -366,15 +366,15 @@ export default {
             lineItems,
             metadata,
             discounts,
-            cancelUrl  : location.href,
+            cancelUrl : location.href,
             successUrl: `${location.origin}/payment/success`,
-            payment: this.eventOptions.payment,
-            suffix: {
-              en: this.eventOptions.suffix_en,
+            payment   : this.eventOptions.payment,
+            suffix    : {
+              en   : this.eventOptions.suffix_en,
               kanji: this.eventOptions.suffix_kanji,
-              kana: this.eventOptions.suffix_kana,
-            }
-          }
+              kana : this.eventOptions.suffix_kana,
+            },
+          },
         );
         const session = response.data;
         if (!session.error) {
@@ -384,7 +384,7 @@ export default {
         // エラー処理
         const session = err.response.data;
         this.errorMessage = session.error;
-        console.log(session.error)
+        console.log(session.error);
       } finally {
         this.isProgress = false;
       }

@@ -49,4 +49,4 @@ Google Analyticsの利用規約及びプライバシーポリシーに関する�
 
 ### お問い合せ先
 当準備会の個人情報の取扱に関するお問い合せは下記までご連絡ください。  
-[ご連絡フォーム](https://docs.google.com/forms/d/e/1FAIpQLSeFP43yofY-p2GYOdRiv8rNOZIMF2obWYYQ-ZjjbdUVnGPHnA/viewform) 
+[ご連絡フォーム](/inquiry) 

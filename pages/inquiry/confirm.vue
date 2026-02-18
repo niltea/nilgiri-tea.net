@@ -41,13 +41,15 @@
           .button-wrapper
             button.button-submit(disabled="disabled", :class="{isProgress}"): NuxtLink.button-inner(to="/inquiry/") 修正
             button.button-submit(type="submit", :disabled="isProgress", :class="{isProgress}"): span.button-inner 送信
+          .err.center(v-if="errorMessage") {{errorMessage}}
 </template>
 
 <script>
 export default {
   data () {
     return {
-      isProgress: false,
+      isProgress  : false,
+      errorMessage: '',
     };
   },
   computed: {
@@ -67,7 +69,7 @@ export default {
     inquiryCategory () {
       switch (this.contactData.inquiryCategory) {
         case 'correction':
-          return 'サークル参加申込内容の修正・変更';
+          return 'サークル参加申込内容の修正・変更（通行証・椅子の追加を除く）';
         case 'addOptions':
           return 'サークル通行証または椅子の追加';
         default:
@@ -86,36 +88,34 @@ export default {
     },
     async submit () {
       this.isProgress = true;
-      console.log(this.replaceBR(this.contactData.body))
-      const response = await this.$axios.post(
-        'https://usebasin.com/f/4993e557a6b6',
-        {
-          event          : this.contactData.event,
-          isCircle       : this.contactData.isCircle,
-          inquiryCategory: this.inquiryCategory,
-          ticketCount    : this.contactData.ticketCount,
-          chairCount     : this.contactData.chairCount,
-          paidName       : this.contactData.paidName,
-          name           : this.contactData.name,
-          circleName     : this.contactData.circleName,
-          email          : this.contactData.mail,
-          body           : this.replaceBR(this.contactData.body),
-        })
-        .catch((err) => {
-          throw new Error(err);
-        });
-      if (response.data.error === true) {
-        this.errorMessage = response.text;
-        console.log('err');
-        console.log(response.err);
-        return;
+
+      const params = new URLSearchParams();
+      params.append('entry.1944098450', this.contactData.event || '');
+      params.append('entry.314071100', this.contactData.isCircle ? 'サークル' : '一般');
+      params.append('entry.1618166043', this.contactData.inquiryCategory || '');
+      params.append('entry.836399612', String(this.contactData.ticketCount || '0'));
+
+      params.append('entry.794369013', this.contactData.circleName || '');
+      params.append('entry.1496661522', this.contactData.mail || '');
+      params.append('entry.1826635863', this.contactData.name || '');
+      params.append('entry.411219061', this.replaceBR(this.contactData.body) || '');
+
+      try {
+        await fetch(
+          'https://docs.google.com/forms/d/e/1FAIpQLSe-UKvRsyKPRMWwyto6tQ-MFlvhxnUkmVTJTpTXrF1uw-xwNg/formResponse',
+          {
+            method: 'POST',
+            mode  : 'no-cors',
+            body  : params,
+          },
+        );
+        // this.$store.dispatch('inquiry/removeAction');
+        this.$router.push('/inquiry/complete/');
+      } catch (_err) {
+        this.errorMessage = '送信に失敗しました。時間をおいて再度お試しください。';
+      } finally {
+        this.isProgress = false;
       }
-      console.log('ok');
-      console.log(response);
-      // 送信後、storeに保存していたデータを破棄
-      this.$store.dispatch('inquiry/removeAction');
-      // 確認画面に遷移
-      this.$router.push('/inquiry/complete/');
     },
   },
 };

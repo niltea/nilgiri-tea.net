@@ -8,7 +8,7 @@
         br
         | 必要な場合、準備会より返信を行いますのでお待ちください。
         br
-        p(v-if="contactData.inquiryCategory === 'addOptions'")
+        //- p(v-if="contactData.inquiryCategory === 'addOptions'")
           | 続いて、
           NuxtLink(to="/payment/options") お支払いページ
           | より、追加料金のお支払いを行ってください。

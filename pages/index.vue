@@ -14,8 +14,6 @@
       h2 Contact
       p
         |ご連絡は下記フォームよりお願いします。
-        br
-        |なお、各即売会については、それぞれのWebサイトへ記載のフォームよりご連絡ください。
       nuxt-link(to="/inquiry") contact Form
 </template>
 
@@ -28,8 +26,8 @@ export default {
     };
   },
   mounted () {
-    console.log('05182022');
-  }
+    console.log('02182026');
+  },
 };
 </script>
 

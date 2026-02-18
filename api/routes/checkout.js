@@ -18,7 +18,7 @@ router.post('/checkout', async (req, res) => {
       metadata,
     },
     discounts,
-    customer: customer.id,
+    customer       : customer.id,
     customer_update: {
       address: 'auto',
     },
@@ -32,14 +32,14 @@ router.post('/checkout', async (req, res) => {
   try {
     const session = await stripe.checkout.sessions.create(sessionParams);
     res.json({
-      id: session.id,
+      id   : session.id,
       error: null,
     });
   } catch (e) {
     res.json({
-      id: null,
+      id   : null,
       error: e,
-    })
+    });
   }
 });
 // get
